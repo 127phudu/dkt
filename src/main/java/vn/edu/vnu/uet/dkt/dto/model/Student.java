@@ -6,7 +6,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.Instant;
 
-@Table(name = "users")
+@Table(name = "students")
 @Entity
 @Getter
 @Setter
