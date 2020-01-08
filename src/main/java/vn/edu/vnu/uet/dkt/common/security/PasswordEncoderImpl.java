@@ -1,4 +1,4 @@
-package vn.edu.vnu.uet.dkt.common.auth;
+package vn.edu.vnu.uet.dkt.common.security;
 
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;

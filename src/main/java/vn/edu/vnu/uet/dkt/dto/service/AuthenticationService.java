@@ -1,19 +1,15 @@
-package vn.edu.vnu.uet.dkt.rest.controller;
+package vn.edu.vnu.uet.dkt.dto.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import vn.edu.vnu.uet.dkt.common.EmailValidator;
+import org.springframework.stereotype.Service;
+import vn.edu.vnu.uet.dkt.common.validator.EmailValidator;
 import vn.edu.vnu.uet.dkt.dto.dao.student.StudentDao;
 import vn.edu.vnu.uet.dkt.dto.model.Student;
 import vn.edu.vnu.uet.dkt.rest.model.login.LoginRequest;
 
-@RestController
-@RequestMapping("/api")
-public class LoginController {
+@Service
+public class AuthenticationService {
     @Autowired
     private EmailValidator emailValidator;
 
@@ -23,13 +19,11 @@ public class LoginController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @PostMapping("/login")
-    private String login(@RequestBody LoginRequest request){
-        String encode = passwordEncoder.encode("tuhv98");
+    public String login(LoginRequest request) {
+
 
         String username = request.getUsername();
-        Student student = new Student();
-
+        Student student;
         if (emailValidator.validateEmail(username)) {
             student = studentDao.getByEmail(username);
         } else {

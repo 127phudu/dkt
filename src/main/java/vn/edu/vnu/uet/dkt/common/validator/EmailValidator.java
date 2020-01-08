@@ -1,4 +1,4 @@
-package vn.edu.vnu.uet.dkt.common;
+package vn.edu.vnu.uet.dkt.common.validator;
 
 import org.springframework.stereotype.Component;
 
