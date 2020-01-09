@@ -1,12 +1,18 @@
 package vn.edu.vnu.uet.dkt.dto.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import vn.edu.vnu.uet.dkt.common.exception.UnauthorizedException;
+import vn.edu.vnu.uet.dkt.common.model.DktStudent;
+import vn.edu.vnu.uet.dkt.common.security.JwtTokenHelper;
 import vn.edu.vnu.uet.dkt.common.validator.EmailValidator;
 import vn.edu.vnu.uet.dkt.dto.dao.student.StudentDao;
 import vn.edu.vnu.uet.dkt.dto.model.Student;
 import vn.edu.vnu.uet.dkt.rest.model.login.LoginRequest;
+import vn.edu.vnu.uet.dkt.rest.model.login.LoginResponse;
 
 @Service
 public class AuthenticationService {
@@ -19,18 +25,39 @@ public class AuthenticationService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public String login(LoginRequest request) {
+    @Autowired
+    private ObjectMapper mapper;
 
+    @Autowired
+    private JwtTokenHelper jwtTokenHelper;
+
+    public LoginResponse login(LoginRequest request) {
 
         String username = request.getUsername();
-        Student student;
-        if (emailValidator.validateEmail(username)) {
-            student = studentDao.getByEmail(username);
-        } else {
-            student = studentDao.getByUsername(username);
+        String password = request.getPassword();
+        String test = passwordEncoder.encode("tuhv98");
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
+            throw new UnauthorizedException("Tài khoản mật khẩu không chính xác");
         }
-        Boolean result = passwordEncoder.matches( request.getPassword(), student.getPassword());
-        System.out.println(student);
-        return "success";
+
+        Student student = this.getStudentUsernameOrEmail(username);
+
+        boolean result = passwordEncoder.matches( request.getPassword(), student.getPassword());
+        if (!result) {
+            throw new UnauthorizedException("Tài khoản mật khẩu không chính xác");
+        }
+
+        DktStudent dktStudent = mapper.convertValue(student, DktStudent.class);
+        String token = jwtTokenHelper.generateToken(dktStudent);
+        return LoginResponse.builder()
+                .token(token)
+                .build();
+    }
+
+    private Student getStudentUsernameOrEmail(String username) {
+        if (emailValidator.validateEmail(username)) {
+            return studentDao.getByEmail(username);
+        }
+        return studentDao.getByUsername(username);
     }
 }

@@ -6,10 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import vn.edu.vnu.uet.dkt.common.exception.FormValidateException;
+import vn.edu.vnu.uet.dkt.common.exception.*;
+import vn.edu.vnu.uet.dkt.common.validator.CustomError;
 import vn.edu.vnu.uet.dkt.common.validator.ValidateMessage;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,6 +40,44 @@ public class BaseController {
         return exceptionMessage;
     }
 
+    @ExceptionHandler(ForbiddenException.class)
+    @ResponseStatus(value = HttpStatus.FORBIDDEN)
+    public CustomError handleForbiddenException(HttpServletResponse response, ForbiddenException exception) {
+        response.setContentType("application/json");
+        return new CustomError(exception.getMessage());
+
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    public CustomError handleUnauthorizedException(HttpServletResponse response) {
+        response.setContentType("application/json");
+        return new CustomError("Thông tin xác thực không chính xác");
+    }
+
+    @ExceptionHandler(ServerErrorException.class)
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    public CustomError handleServerErrorException(HttpServletResponse response, ServerErrorException exception) {
+        response.setContentType("application/json");
+        return new CustomError(exception.getMessage());
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public CustomError handleBadRequestException(HttpServletResponse response, BadRequestException exception) {
+        response.setContentType("application/json");
+        return new CustomError(exception.getMessage());
+    }
+
+    /*@ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public CustomError handleNotFoundException(HttpServletResponse response, NotFoundException e) {
+        response.setContentType("application/json");
+        response.setHeader("Content-Type", "application/json");
+        //response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        return new CustomError(e.getMessage());
+    }*/
+
     private void putFieldError(Map<String, Object> errors, FieldError error) {
         val key = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, error.getField());
         val value = error.getDefaultMessage();
@@ -45,4 +85,6 @@ public class BaseController {
             errors.put(key, value.toString());
         }
     }
+
+
 }
