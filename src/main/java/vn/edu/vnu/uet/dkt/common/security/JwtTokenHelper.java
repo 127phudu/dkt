@@ -1,6 +1,5 @@
 package vn.edu.vnu.uet.dkt.common.security;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -23,7 +22,11 @@ public class JwtTokenHelper {
     static String SECRET_KEY;
     static final String TOKEN_PREFIX = "Bearer ";
     static final String HEADER_STRING = "Authorization";
-    static final String ROLE = "ROLE";
+    static final String ROLE = "role";
+    static final String ID = "id";
+    static final String USERNAME = "username";
+    static final String EMAIL = "email";
+    static final String COURSES = "courses";
 
     private static ObjectMapper mapper = new ObjectMapper();
 
@@ -32,18 +35,17 @@ public class JwtTokenHelper {
         SECRET_KEY = secretKey;
     }
 
-    public String generateToken(DktStudent student) {
-        String token;
-        try {
-            token = Jwts.builder()
-                    .setSubject(mapper.writeValueAsString(student))
-                    .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
-                    .compact();
-            return TOKEN_PREFIX + token;
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public String generateTokenStudent(DktStudent student) {
+        String token = null;
+        student.setRole("Student");
+        token = Jwts.builder()
+                .claim(ID, student.getId())
+                .claim(USERNAME, student.getUsername())
+                .claim(EMAIL, student.getEmail())
+                .claim(ROLE, student.getRole())
+                .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
+                .compact();
+        return TOKEN_PREFIX + token;
     }
 
     public static Authentication getAuthentication(HttpServletRequest request) {
@@ -60,14 +62,24 @@ public class JwtTokenHelper {
                     .setSigningKey(SECRET_KEY)
                     .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
                     .getBody();
+            String role = claims.get(ROLE).toString();
+            String id = claims.get(ID).toString();
+            String username = claims.get(USERNAME).toString();
+            String email = claims.get(EMAIL).toString();
             Collection authorities =
                     Arrays.stream(claims.get(ROLE).toString().split(","))
                             .map(SimpleGrantedAuthority::new)
                             .collect(Collectors.toList());
-            DktStudent student = mapper.readValue(claims.getSubject(), DktStudent.class);
+            DktStudent student = DktStudent.builder()
+                    .id(Long.parseLong(id))
+                    .username(username)
+                    .email(email)
+                    .role(role)
+                    .build();
             auth = new UsernamePasswordAuthenticationToken(student,null,authorities);
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
         return auth;
     }

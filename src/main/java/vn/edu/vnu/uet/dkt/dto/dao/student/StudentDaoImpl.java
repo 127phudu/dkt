@@ -19,4 +19,9 @@ public class StudentDaoImpl implements StudentDao{
     public Student getByUsername(String username) {
         return studentRepository.findByUsername(username);
     }
+
+    @Override
+    public Student save(Student student) {
+        return studentRepository.save(student);
+    }
 }

@@ -1,4 +1,4 @@
-package vn.edu.vnu.uet.dkt.rest.model.login;
+package vn.edu.vnu.uet.dkt.rest.model.auth;
 
 import lombok.Getter;
 import lombok.Setter;

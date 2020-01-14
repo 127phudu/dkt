@@ -11,8 +11,8 @@ import vn.edu.vnu.uet.dkt.common.security.JwtTokenHelper;
 import vn.edu.vnu.uet.dkt.common.validator.EmailValidator;
 import vn.edu.vnu.uet.dkt.dto.dao.student.StudentDao;
 import vn.edu.vnu.uet.dkt.dto.model.Student;
-import vn.edu.vnu.uet.dkt.rest.model.login.LoginRequest;
-import vn.edu.vnu.uet.dkt.rest.model.login.LoginResponse;
+import vn.edu.vnu.uet.dkt.rest.model.auth.LoginRequest;
+import vn.edu.vnu.uet.dkt.rest.model.auth.LoginResponse;
 
 @Service
 public class AuthenticationService {
@@ -35,7 +35,6 @@ public class AuthenticationService {
 
         String username = request.getUsername();
         String password = request.getPassword();
-        String test = passwordEncoder.encode("tuhv98");
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
             throw new UnauthorizedException("Tài khoản mật khẩu không chính xác");
         }
@@ -48,7 +47,7 @@ public class AuthenticationService {
         }
 
         DktStudent dktStudent = mapper.convertValue(student, DktStudent.class);
-        String token = jwtTokenHelper.generateToken(dktStudent);
+        String token = jwtTokenHelper.generateTokenStudent(dktStudent);
         return LoginResponse.builder()
                 .token(token)
                 .build();

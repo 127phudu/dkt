@@ -1,17 +1,15 @@
-package vn.edu.vnu.uet.dkt.common.model;
+package vn.edu.vnu.uet.dkt.rest.model.account;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Builder
 @Getter
 @Setter
-public class DktStudent {
+@Builder
+public class AccountResponse {
     private Long id;
     private String username;
     private String email;
     private String courses;
-    private String role;
 }
