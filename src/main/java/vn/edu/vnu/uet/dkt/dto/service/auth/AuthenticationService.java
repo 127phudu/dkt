@@ -1,4 +1,4 @@
-package vn.edu.vnu.uet.dkt.dto.service;
+package vn.edu.vnu.uet.dkt.dto.service.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;

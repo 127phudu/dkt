@@ -8,10 +8,10 @@ import java.util.concurrent.Executors;
 
 public class BaseController {
     @Autowired
-    protected ExecutorService portalExecutorService;
+    protected ExecutorService executorService;
 
     @Bean
-    public ExecutorService portalExecutorService() {
+    public ExecutorService executorService() {
         return Executors.newFixedThreadPool(5);
     }
 }
