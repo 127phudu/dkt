@@ -6,9 +6,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import vn.edu.vnu.uet.dkt.common.exception.BaseException;
 import vn.edu.vnu.uet.dkt.common.exception.FormValidateException;
 import vn.edu.vnu.uet.dkt.dto.service.AuthenticationService;
 import vn.edu.vnu.uet.dkt.rest.controller.BaseController;
+import vn.edu.vnu.uet.dkt.rest.model.ApiDataResponse;
 import vn.edu.vnu.uet.dkt.rest.model.auth.LoginRequest;
 import vn.edu.vnu.uet.dkt.rest.model.auth.LoginResponse;
 
@@ -22,11 +24,13 @@ public class AuthController extends BaseController {
     private AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public LoginResponse login(@Valid @RequestBody LoginRequest request, BindingResult result){
-
-        if (result.hasErrors()) {
-            throw new FormValidateException(result);
+    public ApiDataResponse<LoginResponse> login(@Valid @RequestBody LoginRequest request){
+        try {
+            return ApiDataResponse.ok(authenticationService.login(request));
+        } catch (BaseException e) {
+            return ApiDataResponse.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            return ApiDataResponse.error();
         }
-        return authenticationService.login(request);
     }
 }

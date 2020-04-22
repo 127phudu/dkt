@@ -6,22 +6,18 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.Instant;
 
-@Table(name = "students")
-@Entity
 @Getter
 @Setter
-public class Student {
+@Entity
+@Table(name = "student_subjects")
+public class StudentSubject {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String username;
-    private String email;
-    private String password;
-    private String studentCode;
-    private String fullName;
-    private String gender;
-    private String dateOfBirth;
-    private String course;
+
+    private Long studentId;
+    private Long subjectSemesterId;
+    private String status;
     private Instant createdAt;
     private Instant modifiedAt;
     private String createdBy;
