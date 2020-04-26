@@ -7,7 +7,7 @@ import vn.edu.vnu.uet.dkt.dto.repository.StudentSubjectExamRepository;
 import java.util.Optional;
 
 @Service
-public class StudentSubjectExamDaoImpl implements StudentSubjectExamDao{
+public class StudentSubjectExamDaoImpl implements StudentSubjectExamDao {
     private final StudentSubjectExamRepository studentSubjectExamRepository;
 
     public StudentSubjectExamDaoImpl(StudentSubjectExamRepository studentSubjectExamRepository) {

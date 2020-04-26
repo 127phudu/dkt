@@ -4,10 +4,11 @@ import org.springframework.stereotype.Repository;
 import vn.edu.vnu.uet.dkt.dto.model.Exam;
 import vn.edu.vnu.uet.dkt.dto.repository.ExamRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class ExamDaoImpl implements ExamDao{
+public class ExamDaoImpl implements ExamDao {
     private final ExamRepository examRepository;
 
     public ExamDaoImpl(ExamRepository examRepository) {
@@ -28,5 +29,10 @@ public class ExamDaoImpl implements ExamDao{
     @Override
     public Exam getByExamCode(String examCode) {
         return examRepository.findByExamCode(examCode);
+    }
+
+    @Override
+    public List<Exam> getAllBySemesterId(Long semesterId) {
+        return examRepository.findAllByRoomSemesterId(semesterId);
     }
 }

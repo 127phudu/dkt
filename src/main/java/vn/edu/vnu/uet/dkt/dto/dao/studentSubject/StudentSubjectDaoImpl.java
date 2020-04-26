@@ -7,7 +7,7 @@ import vn.edu.vnu.uet.dkt.dto.repository.StudentSubjectRepository;
 import java.util.List;
 import java.util.Optional;
 
-public class StudentSubjectDaoImpl implements StudentSubjectDao{
+public class StudentSubjectDaoImpl implements StudentSubjectDao {
     @Autowired
     private StudentSubjectRepository studentSubjectRepository;
 

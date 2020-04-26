@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BaseException extends RuntimeException{
+public class BaseException extends RuntimeException {
     private static final long serialVersionUID = 1L;
     private int code;
     private String message;

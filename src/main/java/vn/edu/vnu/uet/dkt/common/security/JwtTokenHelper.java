@@ -76,7 +76,7 @@ public class JwtTokenHelper {
                     .email(email)
                     .role(role)
                     .build();
-            auth = new UsernamePasswordAuthenticationToken(student,null,authorities);
+            auth = new UsernamePasswordAuthenticationToken(student, null, authorities);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

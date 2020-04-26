@@ -17,4 +17,5 @@ public class StudentSubjectExam {
     private String status;
     private Long examId;
     private Long studentSubjectId;
+    private Long semesterId;
 }

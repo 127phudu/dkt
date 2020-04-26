@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BadRequestException extends BaseException{
+public class BadRequestException extends BaseException {
     private static final long serialVersionUID = 1L;
     private int code;
     private String message;

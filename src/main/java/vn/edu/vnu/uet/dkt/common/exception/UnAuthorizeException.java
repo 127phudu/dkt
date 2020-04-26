@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UnAuthorizeException extends BaseException{
+public class UnAuthorizeException extends BaseException {
     private static final long serialVersionUID = 1L;
     private int code;
     private String message;

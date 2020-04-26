@@ -1,6 +1,5 @@
 package vn.edu.vnu.uet.dkt.rest.controller.auth;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,11 +17,14 @@ import javax.validation.Valid;
 @RequestMapping("/api/auth")
 public class AuthController extends BaseController {
 
-    @Autowired
-    private AuthenticationService authenticationService;
+    private final AuthenticationService authenticationService;
+
+    public AuthController(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
 
     @PostMapping("/login")
-    public ApiDataResponse<LoginResponse> login(@Valid @RequestBody LoginRequest request){
+    public ApiDataResponse<LoginResponse> login(@RequestBody LoginRequest request) {
         try {
             return ApiDataResponse.ok(authenticationService.login(request));
         } catch (BaseException e) {

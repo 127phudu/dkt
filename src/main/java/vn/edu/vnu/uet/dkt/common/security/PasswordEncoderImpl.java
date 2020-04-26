@@ -12,7 +12,7 @@ public class PasswordEncoderImpl implements PasswordEncoder {
     }
 
     public boolean matches(CharSequence rawPassword, String encodedPassword) {
-        String javaEncodedPassword = encodedPassword.replace("$2y$", "$2a$");
+        String javaEncodedPassword = encodedPassword.replace("$2t$", "$2a$");
         return BCrypt.checkpw(rawPassword.toString(), javaEncodedPassword);
     }
 }

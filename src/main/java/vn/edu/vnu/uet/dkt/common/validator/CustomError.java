@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-@JsonRootName(value="error")
+@JsonRootName(value = "error")
 public class CustomError {
     private String message;
 }

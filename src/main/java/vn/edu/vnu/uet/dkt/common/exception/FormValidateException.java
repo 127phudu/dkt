@@ -9,7 +9,7 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FormValidateException extends BaseException{
+public class FormValidateException extends BaseException {
 
     private static final long serialVersionUID = 1L;
     private int code;

@@ -6,7 +6,7 @@ import vn.edu.vnu.uet.dkt.dto.model.Student;
 import vn.edu.vnu.uet.dkt.dto.repository.StudentRepository;
 
 @Service
-public class StudentDaoImpl implements StudentDao{
+public class StudentDaoImpl implements StudentDao {
     @Autowired
     private StudentRepository studentRepository;
 
