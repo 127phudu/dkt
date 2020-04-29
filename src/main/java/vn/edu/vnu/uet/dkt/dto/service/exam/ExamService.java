@@ -30,4 +30,12 @@ public class ExamService {
         return mapperFacade.map(exam, ExamResponse.class);
     }
 
+    public boolean isExistExam(Long examId) {
+        Exam exam = examDao.getById(examId);
+        return exam != null;
+    }
+    public boolean isExistExam(String examCode) {
+        Exam exam  = examDao.getByExamCode(examCode);
+        return exam != null;
+    }
 }

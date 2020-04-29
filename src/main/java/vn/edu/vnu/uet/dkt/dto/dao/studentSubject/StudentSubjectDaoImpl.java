@@ -1,12 +1,14 @@
 package vn.edu.vnu.uet.dkt.dto.dao.studentSubject;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import vn.edu.vnu.uet.dkt.dto.model.StudentSubject;
 import vn.edu.vnu.uet.dkt.dto.repository.StudentSubjectRepository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class StudentSubjectDaoImpl implements StudentSubjectDao {
     @Autowired
     private StudentSubjectRepository studentSubjectRepository;
@@ -28,7 +30,6 @@ public class StudentSubjectDaoImpl implements StudentSubjectDao {
 
     @Override
     public StudentSubject getById(Long id) {
-        Optional<StudentSubject> studentSubject = studentSubjectRepository.findById(id);
-        return studentSubject.orElseGet(studentSubject::get);
+        return studentSubjectRepository.findById(id).orElse(null);
     }
 }
