@@ -10,4 +10,5 @@ import java.util.List;
 public interface ExamRepository extends JpaRepository<Exam, Long> {
     Exam findByExamCode(String examCode);
     List<Exam> findAllByRoomSemesterId(Long semesterId);
+    List<Exam> findAllByLocationIdAndSubjectSemesterId(Long locationId, Long subjectSemesterId);
 }

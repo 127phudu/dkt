@@ -1,9 +1,6 @@
 package vn.edu.vnu.uet.dkt.rest.controller.studentSubjectExam;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import vn.edu.vnu.uet.dkt.common.exception.BaseException;
 import vn.edu.vnu.uet.dkt.dto.service.studentSubject.StudentSubjectService;
 import vn.edu.vnu.uet.dkt.dto.service.studentSubjectExam.StudentSubjectExamService;

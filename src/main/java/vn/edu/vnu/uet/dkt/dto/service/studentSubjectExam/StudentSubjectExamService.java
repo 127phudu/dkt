@@ -19,6 +19,8 @@ import vn.edu.vnu.uet.dkt.dto.service.studentSubject.StudentSubjectService;
 import vn.edu.vnu.uet.dkt.rest.model.studentSubjectExam.StudentSubjectExamRequest;
 import vn.edu.vnu.uet.dkt.rest.model.studentSubjectExam.StudentSubjectExamResponse;
 
+import java.util.List;
+
 @Service
 public class StudentSubjectExamService {
     private final StudentSubjectExamDao studentSubjectExamDao;
@@ -42,9 +44,10 @@ public class StudentSubjectExamService {
     @Transactional
     public StudentSubjectExamResponse create(StudentSubjectExamRequest request) {
         validateStudentSubjectExam(request);
-        Exam exam = examDao.getById(request.getExamId());
+        Exam exam = getExamIdByLocation(request.getLocationId(), request.getStudentSubjectId());
         StudentSubjectExam studentSubjectExam = mapperFacade.map(request, StudentSubjectExam.class);
         studentSubjectExam.setStatus(Constant.active);
+        studentSubjectExam.setExamId(exam.getId());
         studentSubjectExam.setSemesterId(exam.getSemesterId());
         Integer numberStudent = exam.getNumberOfStudentSubscribe();
         if (numberStudent == null) {
@@ -54,24 +57,20 @@ public class StudentSubjectExamService {
         }
         exam.setNumberOfStudentSubscribe(numberStudent);
         examDao.store(exam);
-        return mapperFacade.map(studentSubjectExamDao.store(studentSubjectExam), StudentSubjectExamResponse.class);
+        StudentSubjectExamResponse response = mapperFacade.map(
+                studentSubjectExamDao.store(studentSubjectExam),
+                StudentSubjectExamResponse.class
+        );
+        response.setLocationId(exam.getLocationId());
+        return response;
     }
 
     public void validateStudentSubjectExam(StudentSubjectExamRequest request) {
-        if (request.getExamId() == null) {
-            throw new BadRequestException(400, "Exam không thể null");
-        }
         if (request.getStudentSubjectId() == null) {
             throw new BadRequestException(400, "StudentSubject không thể null");
         }
         if (!studentSubjectService.existStudentSubject(request.getStudentSubjectId())) {
             throw new BadRequestException(400, "StudentSubject không tồn tại");
-        }
-        if (!examService.isExistExam(request.getExamId())) {
-            throw new BadRequestException(400, "Exam không tồn tại");
-        }
-        if (isExistStudentSubjectExam(request.getExamId(), request.getStudentSubjectId())) {
-            throw new BadRequestException(400, "StudentSubjectExam đã tồn tại");
         }
         StudentSubject studentSubject = studentSubjectDao.getById(request.getStudentSubjectId());
 
@@ -79,21 +78,28 @@ public class StudentSubjectExamService {
         if (studentSubject.getStudentId() != dktStudent.getId()) {
             throw new ForbiddenException();
         }
-
-        Exam exam = examDao.getById(request.getExamId());
-
-        if (exam.getSubjectSemesterId() != studentSubject.getSubjectSemesterId()) {
-            throw new BadRequestException(400, "StudentSubject và Exam không hợp lệ!");
-        }
-        Integer numberOfStudentSubscribe = exam.getNumberOfStudentSubscribe();
-        if (numberOfStudentSubscribe == null) numberOfStudentSubscribe = 0;
-        if (numberOfStudentSubscribe >= exam.getNumberOfStudent()) {
-            throw new BadRequestException(400, "Số lượng sinh viên trong phòng đã đầy");
-        }
     }
 
     public boolean isExistStudentSubjectExam(Long examId, Long studentSubjectId) {
         StudentSubjectExam studentSubjectExam = studentSubjectExamDao.getByExamIdAndStudentSubjectId(examId, studentSubjectId);
         return studentSubjectExam != null;
+    }
+
+    private Exam getExamIdByLocation(Long locationId, Long subjectSemesterId) {
+        List<Exam> exams = examDao.getExamByLocationAndSubjectSemester(locationId, subjectSemesterId);
+        Exam slot = findSlot(exams);
+        if (slot == null) {
+            throw new BadRequestException(400, "Không còn chỗ đăng ký");
+        }
+        return slot;
+    }
+
+    private Exam findSlot(List<Exam> exams) {
+        for (Exam exam : exams) {
+            if (exam.getNumberOfStudentSubscribe() == null || exam.getNumberOfStudentSubscribe() < exam.getNumberOfStudent()) {
+                return exam;
+            }
+        }
+        return null;
     }
 }

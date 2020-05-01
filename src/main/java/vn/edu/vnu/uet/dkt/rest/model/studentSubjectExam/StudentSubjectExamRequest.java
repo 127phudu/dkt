@@ -7,8 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class StudentSubjectExamRequest {
-    @JsonProperty("ExamId")
-    private Long examId;
+    @JsonProperty("LocationId")
+    private Long locationId;
 
     @JsonProperty("StudentSubjectId")
     private Long studentSubjectId;

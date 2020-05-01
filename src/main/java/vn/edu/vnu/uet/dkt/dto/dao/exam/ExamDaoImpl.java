@@ -1,11 +1,11 @@
 package vn.edu.vnu.uet.dkt.dto.dao.exam;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 import vn.edu.vnu.uet.dkt.dto.model.Exam;
 import vn.edu.vnu.uet.dkt.dto.repository.ExamRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class ExamDaoImpl implements ExamDao {
@@ -33,5 +33,12 @@ public class ExamDaoImpl implements ExamDao {
     @Override
     public List<Exam> getAllBySemesterId(Long semesterId) {
         return examRepository.findAllByRoomSemesterId(semesterId);
+    }
+
+    @Override
+    public List<Exam> getExamByLocationAndSubjectSemester(Long locationId, Long subjectSemesterId) {
+        List<Exam> exams = examRepository.findAllByLocationIdAndSubjectSemesterId(locationId, subjectSemesterId);
+        if(CollectionUtils.isEmpty(exams)) return null;
+        return exams;
     }
 }
