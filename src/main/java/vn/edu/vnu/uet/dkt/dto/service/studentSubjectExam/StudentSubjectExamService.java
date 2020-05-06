@@ -29,7 +29,6 @@ import java.util.List;
 @Service
 public class StudentSubjectExamService {
     private final StudentSubjectExamDao studentSubjectExamDao;
-    private final StudentSubjectExamDao studentSubjectExamDao;
     private final StudentSubjectDao studentSubjectDao;
     private final AccountService accountService;
     private final StudentSubjectService studentSubjectService;
@@ -74,7 +73,7 @@ public class StudentSubjectExamService {
     public ListStudentSubjectExamResponse getAllByStudentId(PageBase pageBase) {
         DktStudent dktStudent = accountService.getUserSession();
         List<StudentSubjectExam> studentSubjectExams = studentSubjectExamDao.getByStudentId(dktStudent.getId());
-        return getStudentExamPaging(studentSubjectExams, pageBase)
+        return getStudentExamPaging(studentSubjectExams, pageBase);
     }
 
     public void validateStudentSubjectExam(StudentSubjectExamRequest request) {
