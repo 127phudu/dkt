@@ -16,6 +16,6 @@ public class StudentSubjectExamResponse {
     @JsonProperty("Status")
     private String status;
 
-    @JsonProperty("Location")
+    @JsonProperty("LocationId")
     private Long locationId;
 }

@@ -12,17 +12,23 @@ import vn.edu.vnu.uet.dkt.dto.dao.exam.ExamDao;
 import vn.edu.vnu.uet.dkt.dto.dao.studentSubject.StudentSubjectDao;
 import vn.edu.vnu.uet.dkt.dto.dao.studentSubjectExam.StudentSubjectExamDao;
 import vn.edu.vnu.uet.dkt.dto.model.Exam;
+import vn.edu.vnu.uet.dkt.dto.model.Student;
 import vn.edu.vnu.uet.dkt.dto.model.StudentSubject;
 import vn.edu.vnu.uet.dkt.dto.model.StudentSubjectExam;
 import vn.edu.vnu.uet.dkt.dto.service.exam.ExamService;
 import vn.edu.vnu.uet.dkt.dto.service.studentSubject.StudentSubjectService;
+import vn.edu.vnu.uet.dkt.rest.model.PageBase;
+import vn.edu.vnu.uet.dkt.rest.model.PageResponse;
+import vn.edu.vnu.uet.dkt.rest.model.studentSubjectExam.ListStudentSubjectExamResponse;
 import vn.edu.vnu.uet.dkt.rest.model.studentSubjectExam.StudentSubjectExamRequest;
 import vn.edu.vnu.uet.dkt.rest.model.studentSubjectExam.StudentSubjectExamResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class StudentSubjectExamService {
+    private final StudentSubjectExamDao studentSubjectExamDao;
     private final StudentSubjectExamDao studentSubjectExamDao;
     private final StudentSubjectDao studentSubjectDao;
     private final AccountService accountService;
@@ -65,6 +71,12 @@ public class StudentSubjectExamService {
         return response;
     }
 
+    public ListStudentSubjectExamResponse getAllByStudentId(PageBase pageBase) {
+        DktStudent dktStudent = accountService.getUserSession();
+        List<StudentSubjectExam> studentSubjectExams = studentSubjectExamDao.getByStudentId(dktStudent.getId());
+        return getStudentExamPaging(studentSubjectExams, pageBase)
+    }
+
     public void validateStudentSubjectExam(StudentSubjectExamRequest request) {
         if (request.getStudentSubjectId() == null) {
             throw new BadRequestException(400, "StudentSubject không thể null");
@@ -83,6 +95,23 @@ public class StudentSubjectExamService {
     public boolean isExistStudentSubjectExam(Long examId, Long studentSubjectId) {
         StudentSubjectExam studentSubjectExam = studentSubjectExamDao.getByExamIdAndStudentSubjectId(examId, studentSubjectId);
         return studentSubjectExam != null;
+    }
+
+    private ListStudentSubjectExamResponse getStudentExamPaging(List<StudentSubjectExam> studentSubjectExams, PageBase pageBase) {
+        List<StudentSubjectExam> studentSubjectExamList = new ArrayList<>();
+        Integer page = pageBase.getPage();
+        Integer size = pageBase.getSize();
+        int total = studentSubjectExams.size();
+        int maxSize = Math.min(total, size * page);
+        for (int i = size * (page - 1); i < maxSize; i++) {
+            studentSubjectExamList.add(studentSubjectExams.get(i));
+        }
+        PageResponse pageResponse = new PageResponse(page, size, total);
+        ListStudentSubjectExamResponse studentSubjectExamResponse = new ListStudentSubjectExamResponse(
+                mapperFacade.mapAsList(studentSubjectExamList, StudentSubjectExamResponse.class),
+                pageResponse
+        );
+        return studentSubjectExamResponse;
     }
 
     private Exam getExamIdByLocation(Long locationId, Long subjectSemesterId) {
