@@ -33,4 +33,9 @@ public class StudentSubjectDaoImpl implements StudentSubjectDao {
     public StudentSubject getById(Long id) {
         return studentSubjectRepository.findById(id).orElse(null);
     }
+
+    @Override
+    public List<StudentSubject> getBySemesterId(Long semesterId) {
+        return studentSubjectRepository.findBySemesterId(semesterId);
+    }
 }

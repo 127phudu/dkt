@@ -6,7 +6,12 @@ import vn.edu.vnu.uet.dkt.common.security.AccountService;
 import vn.edu.vnu.uet.dkt.dto.dao.student.StudentDao;
 import vn.edu.vnu.uet.dkt.dto.dao.studentSubject.StudentSubjectDao;
 import vn.edu.vnu.uet.dkt.dto.model.StudentSubject;
+import vn.edu.vnu.uet.dkt.rest.model.PageBase;
+import vn.edu.vnu.uet.dkt.rest.model.PageResponse;
+import vn.edu.vnu.uet.dkt.rest.model.studentSubject.ListStudentSubjectResponse;
+import vn.edu.vnu.uet.dkt.rest.model.studentSubject.StudentSubjectResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,6 +36,30 @@ public class StudentSubjectService {
         return studentSubjectDao.getAll();
     }
 
+    public ListStudentSubjectResponse getStudentSubjectBySemesterId(Long id, PageBase pageBase) {
+        List<StudentSubject> studentSubjects = studentSubjectDao.getBySemesterId(id);
+        return getStudentSubjectPaging(studentSubjects, pageBase);
+    }
+
+    private ListStudentSubjectResponse getStudentSubjectPaging(List<StudentSubject> studentSubject, PageBase pageBase) {
+        List<StudentSubject> studentSubjectList = new ArrayList<>();
+        Integer page = pageBase.getPage();
+        Integer size = pageBase.getSize();
+        int total = studentSubject.size();
+        int maxSize = Math.min(total, size * page);
+        for (int i = size * (page - 1); i < maxSize; i++) {
+            studentSubjectList.add(studentSubject.get(i));
+        }
+        PageResponse pageResponse = new PageResponse(page, size, total);
+        return new ListStudentSubjectResponse(
+                mapperFacade.mapAsList(studentSubjectList, StudentSubjectResponse.class),
+                pageResponse
+        );
+    }
+
+    public StudentSubjectResponse getById(Long id) {
+        return mapperFacade.map(studentSubjectDao.getById(id), StudentSubjectResponse.class);
+    }
 
     public boolean existStudentSubject(Long studentId, Long subjectSemesterId) {
         StudentSubject studentSubject = studentSubjectDao.getByStudentAndSubjectSemesterId(studentId, subjectSemesterId);
