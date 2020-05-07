@@ -2,6 +2,7 @@ package vn.edu.vnu.uet.dkt.dto.service.studentSubject;
 
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.stereotype.Service;
+import vn.edu.vnu.uet.dkt.common.model.DktStudent;
 import vn.edu.vnu.uet.dkt.common.security.AccountService;
 import vn.edu.vnu.uet.dkt.dto.dao.student.StudentDao;
 import vn.edu.vnu.uet.dkt.dto.dao.studentSubject.StudentSubjectDao;
@@ -37,7 +38,8 @@ public class StudentSubjectService {
     }
 
     public ListStudentSubjectResponse getStudentSubjectBySemesterId(Long id, PageBase pageBase) {
-        List<StudentSubject> studentSubjects = studentSubjectDao.getBySemesterId(id);
+        DktStudent dktStudent = accountService.getUserSession();
+        List<StudentSubject> studentSubjects = studentSubjectDao.getBySemesterIdAndStudentId(id, dktStudent.getId());
         return getStudentSubjectPaging(studentSubjects, pageBase);
     }
 

@@ -10,4 +10,6 @@ import java.util.List;
 public interface StudentSubjectRepository extends JpaRepository<StudentSubject, Long> {
     StudentSubject findByStudentIdAndSubjectSemesterId(Long studentId, Long subjectSemesterId);
     List<StudentSubject> findBySemesterId(Long semesterId);
+    StudentSubject findByIdAndSubjectId(Long id, Long subjectId);
+    List<StudentSubject> findBySemesterIdAndStudentId(Long semesterId, Long studentId);
 }
