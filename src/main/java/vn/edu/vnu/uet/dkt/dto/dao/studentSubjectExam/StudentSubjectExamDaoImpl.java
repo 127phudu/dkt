@@ -50,4 +50,9 @@ public class StudentSubjectExamDaoImpl implements StudentSubjectExamDao {
         }
         return studentSubjectExams;
     }
+
+    @Override
+    public void delete(StudentSubjectExam studentSubjectExam) {
+        studentSubjectExamRepository.delete(studentSubjectExam);
+    }
 }

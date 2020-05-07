@@ -13,5 +13,6 @@ public interface StudentSubjectExamDao {
 
     List<StudentSubjectExam> getAll();
     List<StudentSubjectExam> getByStudentId(Long id);
+    void delete(StudentSubjectExam studentSubjectExam);
 
 }

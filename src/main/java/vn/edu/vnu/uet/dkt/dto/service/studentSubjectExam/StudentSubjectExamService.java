@@ -9,12 +9,11 @@ import vn.edu.vnu.uet.dkt.common.exception.ForbiddenException;
 import vn.edu.vnu.uet.dkt.common.model.DktStudent;
 import vn.edu.vnu.uet.dkt.common.security.AccountService;
 import vn.edu.vnu.uet.dkt.dto.dao.exam.ExamDao;
+import vn.edu.vnu.uet.dkt.dto.dao.semester.SemesterDao;
 import vn.edu.vnu.uet.dkt.dto.dao.studentSubject.StudentSubjectDao;
 import vn.edu.vnu.uet.dkt.dto.dao.studentSubjectExam.StudentSubjectExamDao;
-import vn.edu.vnu.uet.dkt.dto.model.Exam;
-import vn.edu.vnu.uet.dkt.dto.model.Student;
-import vn.edu.vnu.uet.dkt.dto.model.StudentSubject;
-import vn.edu.vnu.uet.dkt.dto.model.StudentSubjectExam;
+import vn.edu.vnu.uet.dkt.dto.dao.subjectSemester.SubjectSemesterDao;
+import vn.edu.vnu.uet.dkt.dto.model.*;
 import vn.edu.vnu.uet.dkt.dto.service.exam.ExamService;
 import vn.edu.vnu.uet.dkt.dto.service.studentSubject.StudentSubjectService;
 import vn.edu.vnu.uet.dkt.rest.model.PageBase;
@@ -32,24 +31,34 @@ public class StudentSubjectExamService {
     private final StudentSubjectDao studentSubjectDao;
     private final AccountService accountService;
     private final StudentSubjectService studentSubjectService;
+    private final SubjectSemesterDao subjectSemesterDao;
     private final ExamService examService;
     private final MapperFacade mapperFacade;
     private final ExamDao examDao;
+    private final SemesterDao semesterDao;
 
-    public StudentSubjectExamService(StudentSubjectExamDao studentSubjectExamDao, StudentSubjectDao studentSubjectDao, AccountService accountService, StudentSubjectService studentSubjectService, ExamService examService, MapperFacade mapperFacade, ExamDao examDao) {
+    public StudentSubjectExamService(StudentSubjectExamDao studentSubjectExamDao, StudentSubjectDao studentSubjectDao, AccountService accountService, StudentSubjectService studentSubjectService, SubjectSemesterDao subjectSemesterDao, ExamService examService, MapperFacade mapperFacade, ExamDao examDao, SemesterDao semesterDao) {
         this.studentSubjectExamDao = studentSubjectExamDao;
         this.studentSubjectDao = studentSubjectDao;
         this.accountService = accountService;
         this.studentSubjectService = studentSubjectService;
+        this.subjectSemesterDao = subjectSemesterDao;
         this.examService = examService;
         this.mapperFacade = mapperFacade;
         this.examDao = examDao;
+        this.semesterDao = semesterDao;
     }
 
     @Transactional
     public StudentSubjectExamResponse create(StudentSubjectExamRequest request) {
         validateStudentSubjectExam(request);
-        Exam exam = getExamIdByLocation(request.getLocationId(), request.getStudentSubjectId());
+        StudentSubject studentSubject = studentSubjectDao.getById(request.getStudentSubjectId());
+        SubjectSemester subjectSemester = subjectSemesterDao.getBySubjectIdAndSemesterId(
+                studentSubject.getSubjectId(),
+                studentSubject.getSemesterId()
+        );
+
+        Exam exam = getExamIdByLocation(request.getLocationId(), subjectSemester.getId());
         StudentSubjectExam studentSubjectExam = mapperFacade.map(request, StudentSubjectExam.class);
         studentSubjectExam.setStatus(Constant.active);
         studentSubjectExam.setExamId(exam.getId());
@@ -77,6 +86,7 @@ public class StudentSubjectExamService {
     }
 
     public void validateStudentSubjectExam(StudentSubjectExamRequest request) {
+
         if (request.getStudentSubjectId() == null) {
             throw new BadRequestException(400, "StudentSubject không thể null");
         }
@@ -84,11 +94,20 @@ public class StudentSubjectExamService {
             throw new BadRequestException(400, "StudentSubject không tồn tại");
         }
         StudentSubject studentSubject = studentSubjectDao.getById(request.getStudentSubjectId());
+        Semester semester = semesterDao.getById(studentSubject.getSemesterId());
 
+        if (semester.getStatus() == null || semester.getStatus().equals(Constant.inActive)) {
+            throw new BadRequestException(400, "Chưa đến giờ đăng ký thi");
+        }
         DktStudent dktStudent = accountService.getUserSession();
         if (studentSubject.getStudentId() != dktStudent.getId()) {
             throw new ForbiddenException();
         }
+    }
+
+    public void delete(Long id) {
+        StudentSubjectExam studentSubjectExam = studentSubjectExamDao.getById(id);
+        studentSubjectExamDao.delete(studentSubjectExam);
     }
 
     public boolean isExistStudentSubjectExam(Long examId, Long studentSubjectId) {

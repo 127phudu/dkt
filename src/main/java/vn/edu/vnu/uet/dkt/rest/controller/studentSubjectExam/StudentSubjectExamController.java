@@ -12,7 +12,7 @@ import vn.edu.vnu.uet.dkt.rest.model.studentSubjectExam.StudentSubjectExamReques
 import vn.edu.vnu.uet.dkt.rest.model.studentSubjectExam.StudentSubjectExamResponse;
 
 @RestController
-@RequestMapping("/student/student_subject_exams")
+@RequestMapping("/student/student_subject_exam")
 public class StudentSubjectExamController {
     private final StudentSubjectService studentSubjectService;
     private final StudentSubjectExamService studentSubjectExamService;
@@ -41,6 +41,18 @@ public class StudentSubjectExamController {
         try {
             PageBase pageBase = PageUtil.validate(page, size);
             return ApiDataResponse.ok(studentSubjectExamService.getAllByStudentId(pageBase));
+        } catch (BaseException e) {
+            return ApiDataResponse.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            return ApiDataResponse.error();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiDataResponse<String> delete(@PathVariable Long id) {
+        try {
+            studentSubjectExamService.delete(id);
+            return ApiDataResponse.ok("success");
         } catch (BaseException e) {
             return ApiDataResponse.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
