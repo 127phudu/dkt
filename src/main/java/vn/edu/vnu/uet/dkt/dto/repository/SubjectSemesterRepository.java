@@ -6,5 +6,5 @@ import vn.edu.vnu.uet.dkt.dto.model.SubjectSemester;
 
 @Repository
 public interface SubjectSemesterRepository extends JpaRepository<SubjectSemester, Long> {
-    SubjectSemester findBySemesterIdAndSemesterId(Long semesterId, Long subjectId);
+    SubjectSemester findBySemesterIdAndSubjectId(Long semesterId, Long subjectId);
 }

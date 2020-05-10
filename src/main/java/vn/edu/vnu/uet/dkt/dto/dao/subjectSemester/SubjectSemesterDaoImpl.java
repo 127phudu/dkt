@@ -14,6 +14,6 @@ public class SubjectSemesterDaoImpl implements SubjectSemesterDao{
 
     @Override
     public SubjectSemester getBySubjectIdAndSemesterId(Long subjectId, Long semesterId) {
-        return subjectSemesterRepository.findBySemesterIdAndSemesterId(semesterId, subjectId);
+        return subjectSemesterRepository.findBySemesterIdAndSubjectId(semesterId, subjectId);
     }
 }
