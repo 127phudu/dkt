@@ -63,6 +63,7 @@ public class StudentSubjectExamService {
         studentSubjectExam.setStatus(Constant.active);
         studentSubjectExam.setExamId(exam.getId());
         studentSubjectExam.setSemesterId(exam.getSemesterId());
+        studentSubjectExam.setStudentId(studentSubject.getStudentId());
         Integer numberStudent = exam.getNumberOfStudentSubscribe();
         if (numberStudent == null) {
             numberStudent = 1;
@@ -100,7 +101,7 @@ public class StudentSubjectExamService {
             throw new BadRequestException(400, "Chưa đến giờ đăng ký thi");
         }
         DktStudent dktStudent = accountService.getUserSession();
-        if (studentSubject.getStudentId() != dktStudent.getId()) {
+        if (!studentSubject.getStudentId().equals(dktStudent.getId())) {
             throw new ForbiddenException();
         }
     }
@@ -125,11 +126,10 @@ public class StudentSubjectExamService {
             studentSubjectExamList.add(studentSubjectExams.get(i));
         }
         PageResponse pageResponse = new PageResponse(page, size, total);
-        ListStudentSubjectExamResponse studentSubjectExamResponse = new ListStudentSubjectExamResponse(
+        return new ListStudentSubjectExamResponse(
                 mapperFacade.mapAsList(studentSubjectExamList, StudentSubjectExamResponse.class),
                 pageResponse
         );
-        return studentSubjectExamResponse;
     }
 
     private Exam getExamIdByLocation(Long locationId, Long subjectSemesterId) {
