@@ -72,6 +72,9 @@ public class StudentSubjectExamService {
         }
         exam.setNumberOfStudentSubscribe(numberStudent);
         examDao.store(exam);
+
+        studentSubject.setIsRegistered(true);
+        studentSubjectDao.store(studentSubject);
         StudentSubjectExamResponse response = mapperFacade.map(
                 studentSubjectExamDao.store(studentSubjectExam),
                 StudentSubjectExamResponse.class
@@ -108,6 +111,18 @@ public class StudentSubjectExamService {
 
     public void delete(Long id) {
         StudentSubjectExam studentSubjectExam = studentSubjectExamDao.getById(id);
+        Exam exam = examDao.getById(studentSubjectExam.getExamId());
+        int numberStudent = exam.getNumberOfStudentSubscribe() == null ? 0 : exam.getNumberOfStudentSubscribe();
+        if (numberStudent == 0) {
+            exam.setNumberOfStudentSubscribe(0);
+        } else {
+            exam.setNumberOfStudentSubscribe(numberStudent - 1);
+        }
+        examDao.store(exam);
+
+        StudentSubject studentSubject = studentSubjectDao.getById(studentSubjectExam.getStudentSubjectId());
+        studentSubject.setIsRegistered(false);
+        studentSubjectDao.store(studentSubject);
         studentSubjectExamDao.delete(studentSubjectExam);
     }
 
