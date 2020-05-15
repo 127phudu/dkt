@@ -5,34 +5,29 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 public class ExamResponse {
-    @JsonProperty(value = "Id")
-    private Integer id;
-
     @JsonProperty(value = "NumberOfStudent")
     private Integer numberOfStudent;
+
+    @JsonProperty(value = "NumberOfStudentSubscribe")
+    private Integer numberOfStudentSubscribe;
 
     @JsonProperty(value = "ExamCode")
     private String examCode;
 
     @JsonProperty(value = "StartTime")
-    private Instant startTime;
+    private String startTime;
 
-    @JsonProperty(value = "Duration")
-    private Long duration;
+    @JsonProperty(value = "EndTime")
+    private String endTime;
 
     @JsonProperty(value = "Date")
-    private Instant date;
+    private String date;
 
-    @JsonProperty(value = "SubjectSemesterId")
-    private Long subjectSemesterId;
-
-    @JsonProperty(value = "RoomSemesterId")
-    private Long roomSemesterId;
-
-    @JsonProperty(value = "SemesterId")
-    private Long semesterId;
+    @JsonProperty(value = "Location")
+    private Long location;
 }

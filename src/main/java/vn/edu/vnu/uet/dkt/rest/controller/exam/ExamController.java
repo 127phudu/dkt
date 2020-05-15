@@ -40,20 +40,17 @@ public class ExamController {
         }
     }
 
-    @GetMapping("/semester/{id}/search")
-    public ApiDataResponse<ExamResponse> search(
-            @PathVariable Long id,
-            @RequestParam String query,
-            @RequestParam Integer size,
-            @RequestParam Integer page
+    /*@GetMapping("/semester/{id}/search")
+    public ApiDataResponse<ListExamResponse> search(
+            @PathVariable Long id
     ) {
         try {
-            PageBase pageBase = PageUtil.validate(page, size);
-            return ApiDataResponse.ok(examService.search(id, query, pageBase));
+            //PageBase pageBase = PageUtil.validate(page, size);
+            return ApiDataResponse.ok(examService.search(id));
         } catch (BaseException e) {
             return ApiDataResponse.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
             return ApiDataResponse.error();
         }
-    }
+    }*/
 }
