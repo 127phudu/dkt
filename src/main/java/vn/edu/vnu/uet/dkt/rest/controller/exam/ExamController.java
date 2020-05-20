@@ -32,6 +32,7 @@ public class ExamController {
     @GetMapping(path = "{id}")
     public ApiDataResponse<ExamResponse> getExam(@PathVariable Long id) {
         try {
+            System.out.println("getExamById");
             return ApiDataResponse.ok(examService.getExam(id));
         } catch (BaseException e) {
             return ApiDataResponse.error(e.getCode(), e.getMessage());

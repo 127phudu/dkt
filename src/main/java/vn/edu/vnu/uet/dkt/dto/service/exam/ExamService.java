@@ -1,6 +1,8 @@
 package vn.edu.vnu.uet.dkt.dto.service.exam;
 
 import ma.glasnost.orika.MapperFacade;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import vn.edu.vnu.uet.dkt.common.model.DktStudent;
@@ -43,7 +45,9 @@ public class ExamService {
         return generateListExamResponse(exams);
     }
 
+    @Cacheable(value = "exams", key = "#id")
     public ExamResponse getExam(Long id) {
+        System.out.println("get from db");
         Exam exam = examDao.getById(id);
         return mapperFacade.map(exam, ExamResponse.class);
     }

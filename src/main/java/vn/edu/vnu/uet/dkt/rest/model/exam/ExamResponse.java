@@ -4,12 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class ExamResponse {
+public class ExamResponse implements Serializable {
     @JsonProperty(value = "NumberOfStudent")
     private Integer numberOfStudent;
 
