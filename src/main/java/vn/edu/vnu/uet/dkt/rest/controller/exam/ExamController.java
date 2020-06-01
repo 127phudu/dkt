@@ -40,6 +40,23 @@ public class ExamController {
         }
     }
 
+    @PatchMapping(path = "redis_trans/{id}")
+    public ApiDataResponse<ExamResponse> redisTrans(@PathVariable Long id) {
+        try {
+            long result = examService.redisTrans(id);
+            if (result > 0) {
+                return ApiDataResponse.ok(result);
+            } else {
+                return ApiDataResponse.error();
+            }
+
+        } catch (BaseException e) {
+            return ApiDataResponse.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            return ApiDataResponse.error();
+        }
+    }
+
     /*@GetMapping("/semester/{id}/search")
     public ApiDataResponse<ListExamResponse> search(
             @PathVariable Long id

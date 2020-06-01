@@ -95,4 +95,8 @@ public class ExamService {
         examResponse.setExamCode(exam.getExamCode());
         return examResponse;
     }
+
+    public long redisTrans(Long id) {
+        return examDao.redisTrans(id);
+    }
 }
