@@ -26,11 +26,6 @@ public class ExamDaoImpl implements ExamDao {
     }
 
     @Override
-    public Exam getByExamCode(String examCode) {
-        return examRepository.findByExamCode(examCode);
-    }
-
-    @Override
     public List<Exam> getAllBySemesterId(Long semesterId) {
         return examRepository.findAllByRoomSemesterId(semesterId);
     }

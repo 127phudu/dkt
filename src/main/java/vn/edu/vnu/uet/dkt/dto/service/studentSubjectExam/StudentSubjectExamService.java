@@ -60,7 +60,6 @@ public class StudentSubjectExamService {
 
         Exam exam = getExamIdByLocation(request.getLocationId(), subjectSemester.getId());
         StudentSubjectExam studentSubjectExam = mapperFacade.map(request, StudentSubjectExam.class);
-        studentSubjectExam.setStatus(Constant.active);
         studentSubjectExam.setExamId(exam.getId());
         studentSubjectExam.setSemesterId(exam.getSemesterId());
         studentSubjectExam.setStudentId(studentSubject.getStudentId());

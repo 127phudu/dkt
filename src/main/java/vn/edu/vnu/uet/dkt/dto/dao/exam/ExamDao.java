@@ -9,8 +9,6 @@ public interface ExamDao {
 
     Exam getById(Long id);
 
-    Exam getByExamCode(String examCode);
-
     List<Exam> getAllBySemesterId( Long semesterId);
 
     List<Exam> getExamByLocationAndSubjectSemester(Long locationId, Long subjectSemesterId);

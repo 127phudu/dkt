@@ -1,21 +1,26 @@
 package vn.edu.vnu.uet.dkt.dto.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name = "subjects")
-public class Subject {
+@Table(name = "locations")
+public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String subjectName;
-    private String subjectCode;
-    private Integer numberOfCredit;
+    private String locationName;
+
+    private String locationCode;
+
     private String description;
 }

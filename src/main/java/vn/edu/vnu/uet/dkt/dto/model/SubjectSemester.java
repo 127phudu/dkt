@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.Instant;
 
 @Getter
 @Setter
@@ -13,9 +12,8 @@ import java.time.Instant;
 public class SubjectSemester {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
-    private String subjectSemesterCode;
     private String description;
     private Long subjectId;
     private Long semesterId;

@@ -18,10 +18,15 @@ public class ExamController {
         this.examService = examService;
     }
 
-    @GetMapping("/all")
-    public ApiDataResponse<ListExamResponse> getExamAll(@RequestParam Long semesterId) {
+    @GetMapping("/all/semester/{id}")
+    public ApiDataResponse<ListExamResponse> getExamAll(
+            @PathVariable Long id,
+            @RequestParam(required = false, value = "Size") Integer size,
+            @RequestParam(required = false, value = "Page") Integer page
+    ) {
         try {
-            return ApiDataResponse.ok(examService.getAll(semesterId));
+            PageBase pageBase = PageUtil.validate(page, size);
+            return ApiDataResponse.ok(examService.getAll(id, pageBase));
         } catch (BaseException e) {
             return ApiDataResponse.error(e.getCode(), e.getMessage());
         } catch (Exception e) {

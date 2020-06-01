@@ -16,9 +16,6 @@ public class ExamResponse {
     @JsonProperty(value = "NumberOfStudentSubscribe")
     private Integer numberOfStudentSubscribe;
 
-    @JsonProperty(value = "ExamCode")
-    private String examCode;
-
     @JsonProperty(value = "StartTime")
     private String startTime;
 
@@ -29,5 +26,5 @@ public class ExamResponse {
     private String date;
 
     @JsonProperty(value = "Location")
-    private Long location;
+    private String location;
 }
