@@ -139,6 +139,7 @@ public class StudentSubjectExamService {
         Subject subject = subjectMap.get(exam.getSubjectId());
         resultResponse.setSubjectName(subject.getSubjectName());
         resultResponse.setSubjectCode(subject.getSubjectCode());
+        resultResponse.setStudentSubjectId(exam.getSubjectSemesterId());
 
         Room room = roomMap.get(exam.getRoomId());
         resultResponse.setRoomName(room.getRoomName());
