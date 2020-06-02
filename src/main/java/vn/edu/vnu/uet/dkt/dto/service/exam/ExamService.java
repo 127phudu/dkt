@@ -56,18 +56,7 @@ public class ExamService {
         return generateListExamResponse(examResponses, pageBase);
     }
 
-    public ListExamResponse getResult(Long semesterId, PageBase pageBase) {
-        DktStudent dktStudent = accountService.getUserSession();
-        List<StudentSubjectExam> studentExams = studentSubjectExamDao.getByStudentIdAndSemesterId(dktStudent.getId(), semesterId);
-        List<Long> examIds = studentExams.stream().map(StudentSubjectExam::getExamId).collect(Collectors.toList());
-        List<Exam> exams = examDao.getByExamIdIn(examIds);
-        List<Location> locations = locationDao.getAll();
-        Map<Long, Location> locationMap = locations.stream().collect(Collectors.toMap(Location::getId, x -> x));
-        List<Subject> subjects =  subjectDao.getAll();
-        Map<Long, Subject> subjectMap = subjects.stream().collect(Collectors.toMap(Subject::getId, x -> x));
-        List<ExamResponse> examResponses = exams.stream().map(exam -> getExamResponse(exam, locationMap, subjectMap)).collect(Collectors.toList());
-        return generateListExamResponse(examResponses, pageBase);
-    }
+
 
     public List<ExamResponse> groupExam(List<Exam> exams) {
         List<Location> locations = locationDao.getAll();
@@ -112,13 +101,14 @@ public class ExamService {
         return exam != null;
     }
 
-    private ExamResponse getExamResponse(Exam exam, Map<Long, Location> locationMap, Map<Long, Subject> subjectMap) {
+    public ExamResponse getExamResponse(Exam exam, Map<Long, Location> locationMap, Map<Long, Subject> subjectMap) {
         ExamResponse examResponse = new ExamResponse();
         examResponse.setStartTime(exam.getStartTime().format(format));
         examResponse.setEndTime(exam.getEndTime().format(format));
         examResponse.setDate(exam.getDate().format(formatDate));
 
         Location location = locationMap.get(exam.getLocationId());
+        examResponse.setLocationId(exam.getLocationId());
         examResponse.setLocation(location.getLocationName());
         examResponse.setNumberOfStudent(exam.getNumberOfStudent() == null ? 0 : exam.getNumberOfStudent());
         examResponse.setNumberOfStudentSubscribe(exam.getNumberOfStudentSubscribe() == null ? 0 : exam.getNumberOfStudentSubscribe());

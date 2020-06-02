@@ -1,15 +1,12 @@
-package vn.edu.vnu.uet.dkt.rest.model.exam;
+package vn.edu.vnu.uet.dkt.rest.model.studentSubjectExam;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
-public class ExamResponse {
+public class RegisterResultResponse {
     @JsonProperty(value = "StudentSubjectExamId")
     private Long studentSubjectExamId;
 
@@ -18,12 +15,6 @@ public class ExamResponse {
 
     @JsonProperty(value = "SubjectCode")
     private String subjectCode;
-
-    @JsonProperty(value = "NumberOfStudent")
-    private Integer numberOfStudent;
-
-    @JsonProperty(value = "NumberOfStudentSubscribe")
-    private Integer numberOfStudentSubscribe;
 
     @JsonProperty(value = "StartTime")
     private String startTime;
@@ -42,4 +33,7 @@ public class ExamResponse {
 
     @JsonProperty(value = "StudentSubjectId")
     private Long studentSubjectId;
+
+    @JsonProperty(value = "RoomName")
+    private String roomName;
 }
