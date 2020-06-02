@@ -8,9 +8,9 @@ import vn.edu.vnu.uet.dkt.common.security.AccountService;
 import vn.edu.vnu.uet.dkt.dto.dao.exam.ExamDao;
 import vn.edu.vnu.uet.dkt.dto.dao.location.LocationDao;
 import vn.edu.vnu.uet.dkt.dto.dao.studentSubject.StudentSubjectDao;
-import vn.edu.vnu.uet.dkt.dto.model.Exam;
-import vn.edu.vnu.uet.dkt.dto.model.Location;
-import vn.edu.vnu.uet.dkt.dto.model.StudentSubject;
+import vn.edu.vnu.uet.dkt.dto.dao.studentSubjectExam.StudentSubjectExamDao;
+import vn.edu.vnu.uet.dkt.dto.dao.subject.SubjectDao;
+import vn.edu.vnu.uet.dkt.dto.model.*;
 import vn.edu.vnu.uet.dkt.rest.model.PageBase;
 import vn.edu.vnu.uet.dkt.rest.model.PageResponse;
 import vn.edu.vnu.uet.dkt.rest.model.exam.ExamResponse;
@@ -30,15 +30,19 @@ public class ExamService {
     private final AccountService accountService;
     private final StudentSubjectDao studentSubjectDao;
     private final LocationDao locationDao;
+    private final SubjectDao subjectDao;
+    private final StudentSubjectExamDao studentSubjectExamDao;
     private final DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private final DateTimeFormatter formatDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    public ExamService(ExamDao examDao, MapperFacade mapperFacade, AccountService accountService, StudentSubjectDao studentSubjectDao, LocationDao locationDao) {
+    public ExamService(ExamDao examDao, MapperFacade mapperFacade, AccountService accountService, StudentSubjectDao studentSubjectDao, LocationDao locationDao, SubjectDao subjectDao, StudentSubjectExamDao studentSubjectExamDao) {
         this.examDao = examDao;
         this.mapperFacade = mapperFacade;
         this.accountService = accountService;
         this.studentSubjectDao = studentSubjectDao;
         this.locationDao = locationDao;
+        this.subjectDao = subjectDao;
+        this.studentSubjectExamDao = studentSubjectExamDao;
     }
 
     public ListExamResponse getAll(Long semesterId, PageBase pageBase) {
@@ -52,9 +56,24 @@ public class ExamService {
         return generateListExamResponse(examResponses, pageBase);
     }
 
+    public ListExamResponse getResult(Long semesterId, PageBase pageBase) {
+        DktStudent dktStudent = accountService.getUserSession();
+        List<StudentSubjectExam> studentExams = studentSubjectExamDao.getByStudentIdAndSemesterId(dktStudent.getId(), semesterId);
+        List<Long> examIds = studentExams.stream().map(StudentSubjectExam::getExamId).collect(Collectors.toList());
+        List<Exam> exams = examDao.getByExamIdIn(examIds);
+        List<Location> locations = locationDao.getAll();
+        Map<Long, Location> locationMap = locations.stream().collect(Collectors.toMap(Location::getId, x -> x));
+        List<Subject> subjects =  subjectDao.getAll();
+        Map<Long, Subject> subjectMap = subjects.stream().collect(Collectors.toMap(Subject::getId, x -> x));
+        List<ExamResponse> examResponses = exams.stream().map(exam -> getExamResponse(exam, locationMap, subjectMap)).collect(Collectors.toList());
+        return generateListExamResponse(examResponses, pageBase);
+    }
+
     public List<ExamResponse> groupExam(List<Exam> exams) {
         List<Location> locations = locationDao.getAll();
         Map<Long, Location> locationMap = locations.stream().collect(Collectors.toMap(Location::getId, x -> x));
+        List<Subject> subjects =  subjectDao.getAll();
+        Map<Long, Subject> subjectMap = subjects.stream().collect(Collectors.toMap(Subject::getId, x -> x));
         Map<String, ExamResponse> examMap = new HashMap<>();
         for (Exam exam : exams) {
             ExamResponse examResponse = new ExamResponse();
@@ -66,7 +85,7 @@ public class ExamService {
                 examResponse.setNumberOfStudentSubscribe(subscribe);
                 examResponse.setNumberOfStudent(numStd);
             } else {
-                examResponse = getExamResponse(exam, locationMap);
+                examResponse = getExamResponse(exam, locationMap, subjectMap);
                 examMap.put(key,examResponse);
             }
         }
@@ -93,7 +112,7 @@ public class ExamService {
         return exam != null;
     }
 
-    private ExamResponse getExamResponse(Exam exam, Map<Long, Location> locationMap) {
+    private ExamResponse getExamResponse(Exam exam, Map<Long, Location> locationMap, Map<Long, Subject> subjectMap) {
         ExamResponse examResponse = new ExamResponse();
         examResponse.setStartTime(exam.getStartTime().format(format));
         examResponse.setEndTime(exam.getEndTime().format(format));
@@ -103,6 +122,9 @@ public class ExamService {
         examResponse.setLocation(location.getLocationName());
         examResponse.setNumberOfStudent(exam.getNumberOfStudent() == null ? 0 : exam.getNumberOfStudent());
         examResponse.setNumberOfStudentSubscribe(exam.getNumberOfStudentSubscribe() == null ? 0 : exam.getNumberOfStudentSubscribe());
+        Subject subject = subjectMap.get(exam.getSubjectId());
+        examResponse.setSubjectName(subject.getSubjectName());
+        examResponse.setSubjectCode(subject.getSubjectCode());
         return examResponse;
     }
 }

@@ -14,4 +14,6 @@ public interface ExamDao {
     List<Exam> getExamByLocationAndSubjectSemester(Long locationId, Long subjectSemesterId);
 
     List<Exam> getExamBySemesterIdAndSubjectIdIn(Long semesterId, List<Long> studentIds);
+
+    List<Exam> getByExamIdIn(List<Long> examIds);
 }

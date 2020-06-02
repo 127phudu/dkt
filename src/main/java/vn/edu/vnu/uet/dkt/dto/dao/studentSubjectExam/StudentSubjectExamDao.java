@@ -10,6 +10,7 @@ public interface StudentSubjectExamDao {
     StudentSubjectExam getById(Long id);
 
     StudentSubjectExam getByExamIdAndStudentSubjectId(Long examId, Long studentSubjectId);
+    List<StudentSubjectExam> getByStudentIdAndSemesterId(Long studentId, Long semesterId);
 
     List<StudentSubjectExam> getAll();
     List<StudentSubjectExam> getByStudentId(Long id);

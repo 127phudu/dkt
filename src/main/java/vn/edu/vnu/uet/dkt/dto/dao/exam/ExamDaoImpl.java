@@ -5,6 +5,7 @@ import org.springframework.util.CollectionUtils;
 import vn.edu.vnu.uet.dkt.dto.model.Exam;
 import vn.edu.vnu.uet.dkt.dto.repository.ExamRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -41,6 +42,13 @@ public class ExamDaoImpl implements ExamDao {
     public List<Exam> getExamBySemesterIdAndSubjectIdIn(Long semesterId, List<Long> subjectIds) {
         List<Exam> exams = examRepository.findAllBySemesterIdAndSubjectIdIn(semesterId, subjectIds);
         if(CollectionUtils.isEmpty(exams)) return null;
+        return exams;
+    }
+
+    @Override
+    public List<Exam> getByExamIdIn(List<Long> examIds) {
+        List<Exam> exams = examRepository.findAllByIdIn(examIds);
+        if(CollectionUtils.isEmpty(exams)) return new ArrayList<>();
         return exams;
     }
 }

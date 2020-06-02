@@ -34,6 +34,22 @@ public class ExamController {
         }
     }
 
+    @GetMapping("/registered/semester/{id}")
+    public ApiDataResponse<ListExamResponse> getRegisterResult(
+            @PathVariable Long id,
+            @RequestParam(required = false, value = "Size") Integer size,
+            @RequestParam(required = false, value = "Page") Integer page
+    ) {
+        try {
+            PageBase pageBase = PageUtil.validate(page, size);
+            return ApiDataResponse.ok(examService.getResult(id, pageBase));
+        } catch (BaseException e) {
+            return ApiDataResponse.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            return ApiDataResponse.error();
+        }
+    }
+
     @GetMapping(path = "{id}")
     public ApiDataResponse<ExamResponse> getExam(@PathVariable Long id) {
         try {
