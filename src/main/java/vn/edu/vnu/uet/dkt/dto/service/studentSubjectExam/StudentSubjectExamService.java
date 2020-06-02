@@ -104,6 +104,7 @@ public class StudentSubjectExamService {
 
     public ListRegisterResultResponse getResult(Long semesterId, PageBase pageBase) {
         DktStudent dktStudent = accountService.getUserSession();
+        Semester semester = semesterDao.getById(semesterId);
         List<StudentSubjectExam> studentExams = studentSubjectExamDao.getByStudentIdAndSemesterId(dktStudent.getId(), semesterId);
         List<Long> examIds = studentExams.stream().map(StudentSubjectExam::getExamId).collect(Collectors.toList());
         List<Exam> exams = examDao.getByExamIdIn(examIds);
@@ -113,7 +114,7 @@ public class StudentSubjectExamService {
         Map<Long, Room> roomMap = rooms.stream().collect(Collectors.toMap(Room::getId, x -> x));
         List<Subject> subjects =  subjectDao.getAll();
         Map<Long, Subject> subjectMap = subjects.stream().collect(Collectors.toMap(Subject::getId, x -> x));
-        List<RegisterResultResponse> resultResponses = exams.stream().map(exam -> getResultResponse(exam, locationMap, subjectMap, roomMap)).collect(Collectors.toList());
+        List<RegisterResultResponse> resultResponses = exams.stream().map(exam -> getResultResponse(exam, locationMap, subjectMap, roomMap, semester.getStatus())).collect(Collectors.toList());
         return generateResponse(resultResponses, pageBase);
     }
 
@@ -127,7 +128,7 @@ public class StudentSubjectExamService {
         return new ListRegisterResultResponse(resultResponses.subList(begin, maxSize), pageResponse);
     }
 
-    public RegisterResultResponse getResultResponse(Exam exam, Map<Long, Location> locationMap, Map<Long, Subject> subjectMap, Map<Long, Room> roomMap) {
+    public RegisterResultResponse getResultResponse(Exam exam, Map<Long, Location> locationMap, Map<Long, Subject> subjectMap, Map<Long, Room> roomMap, Integer status) {
         RegisterResultResponse resultResponse = new RegisterResultResponse();
         resultResponse.setStartTime(exam.getStartTime().format(format));
         resultResponse.setEndTime(exam.getEndTime().format(format));
@@ -140,9 +141,10 @@ public class StudentSubjectExamService {
         resultResponse.setSubjectName(subject.getSubjectName());
         resultResponse.setSubjectCode(subject.getSubjectCode());
         resultResponse.setStudentSubjectId(exam.getSubjectSemesterId());
-
-        Room room = roomMap.get(exam.getRoomId());
-        resultResponse.setRoomName(room.getRoomName());
+        if (Constant.REGISTERED == status) {
+            Room room = roomMap.get(exam.getRoomId());
+            resultResponse.setRoomName(room.getRoomName());
+        }
         return resultResponse;
     }
 
