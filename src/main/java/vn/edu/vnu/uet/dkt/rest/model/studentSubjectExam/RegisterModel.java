@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class StudentSubjectExamRequest {
+public class RegisterModel {
     @JsonProperty("LocationId")
     private Long locationId;
 

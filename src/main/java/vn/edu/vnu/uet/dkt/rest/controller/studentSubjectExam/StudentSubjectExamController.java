@@ -9,7 +9,8 @@ import vn.edu.vnu.uet.dkt.rest.model.ApiDataResponse;
 import vn.edu.vnu.uet.dkt.rest.model.PageBase;
 import vn.edu.vnu.uet.dkt.rest.model.exam.ListExamResponse;
 import vn.edu.vnu.uet.dkt.rest.model.studentSubjectExam.ListStudentSubjectExamResponse;
-import vn.edu.vnu.uet.dkt.rest.model.studentSubjectExam.StudentSubjectExamRequest;
+import vn.edu.vnu.uet.dkt.rest.model.studentSubjectExam.RegisterRequest;
+import vn.edu.vnu.uet.dkt.rest.model.studentSubjectExam.RegisterModel;
 import vn.edu.vnu.uet.dkt.rest.model.studentSubjectExam.StudentSubjectExamResponse;
 
 @RestController
@@ -24,9 +25,21 @@ public class StudentSubjectExamController {
     }
 
     @PostMapping
-    public ApiDataResponse<StudentSubjectExamResponse> create(@RequestBody StudentSubjectExamRequest request) {
+    public ApiDataResponse<StudentSubjectExamResponse> create(@RequestBody RegisterModel request) {
         try {
             return ApiDataResponse.ok(studentSubjectExamService.create(request));
+        } catch (BaseException e) {
+            return ApiDataResponse.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            return ApiDataResponse.error();
+        }
+    }
+
+    @PostMapping("/register/semester/{id}")
+    public ApiDataResponse<String> register(@RequestBody RegisterRequest registerRequest, @PathVariable Long id) {
+        try {
+            studentSubjectExamService.register(registerRequest, id);
+            return ApiDataResponse.ok("success");
         } catch (BaseException e) {
             return ApiDataResponse.error(e.getCode(), e.getMessage());
         } catch (Exception e) {

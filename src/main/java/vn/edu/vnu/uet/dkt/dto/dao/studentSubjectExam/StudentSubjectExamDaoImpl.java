@@ -39,6 +39,11 @@ public class StudentSubjectExamDaoImpl implements StudentSubjectExamDao {
     }
 
     @Override
+    public List<StudentSubjectExam> getByStudentSubjectIdIn(List<Long> ids) {
+        return studentSubjectExamRepository.findByStudentSubjectIdIn(ids);
+    }
+
+    @Override
     public List<StudentSubjectExam> getAll() {
         List<StudentSubjectExam> studentSubjectExams =  studentSubjectExamRepository.findAll();
         if(CollectionUtils.isEmpty(studentSubjectExams)) {
@@ -59,5 +64,10 @@ public class StudentSubjectExamDaoImpl implements StudentSubjectExamDao {
     @Override
     public void delete(StudentSubjectExam studentSubjectExam) {
         studentSubjectExamRepository.delete(studentSubjectExam);
+    }
+
+    @Override
+    public void deleteAll(List<StudentSubjectExam> studentSubjectExams) {
+        studentSubjectExamRepository.deleteAll(studentSubjectExams);
     }
 }
