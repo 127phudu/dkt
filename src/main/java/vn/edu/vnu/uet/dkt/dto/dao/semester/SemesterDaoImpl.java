@@ -9,6 +9,8 @@ import vn.edu.vnu.uet.dkt.dto.repository.SemesterRepository;
 
 import javax.persistence.LockModeType;
 import java.time.LocalDateTime;
+import vn.edu.vnu.uet.dkt.common.Constant;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,5 +62,18 @@ public class SemesterDaoImpl implements SemesterDao {
             return new ArrayList<>();
         }
         return semesters;
+    }
+
+    public Long getCurrentSemesterId() {
+        List<Integer> listStatus = new ArrayList<Integer>();
+        listStatus.add(Constant.UNREGISTERED);
+        listStatus.add(Constant.REGISTERING);
+        Semester semester = semesterRepository.findByStatusIn(listStatus);
+
+        if(semester != null) {
+            return semester.getId();
+        } else {
+            return 0L;
+        }
     }
 }

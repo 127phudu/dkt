@@ -11,4 +11,5 @@ public interface SemesterDao  {
     List<Semester> getSemesterRegistering();
     List<Semester> getSemesterRegistered();
     List<Semester> getSemesterIn(List<Long> ids);
+    Long getCurrentSemesterId();
 }

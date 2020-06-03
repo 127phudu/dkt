@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import vn.edu.vnu.uet.dkt.common.model.DktStudent;
 import vn.edu.vnu.uet.dkt.common.security.AccountService;
+import vn.edu.vnu.uet.dkt.common.utilities.PageUtil;
 import vn.edu.vnu.uet.dkt.dto.dao.exam.ExamDao;
 import vn.edu.vnu.uet.dkt.dto.dao.location.LocationDao;
+import vn.edu.vnu.uet.dkt.dto.dao.semester.SemesterDao;
 import vn.edu.vnu.uet.dkt.dto.dao.studentSubject.StudentSubjectDao;
 import vn.edu.vnu.uet.dkt.dto.dao.studentSubjectExam.StudentSubjectExamDao;
 import vn.edu.vnu.uet.dkt.dto.dao.subject.SubjectDao;
@@ -28,11 +30,15 @@ public class ExamService {
     private final StudentSubjectDao studentSubjectDao;
     private final LocationDao locationDao;
     private final SubjectDao subjectDao;
+    private final SemesterDao semesterDao;
     private final StudentSubjectExamDao studentSubjectExamDao;
     private final DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private final DateTimeFormatter formatDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    public ExamService(ExamDao examDao, MapperFacade mapperFacade, AccountService accountService, StudentSubjectDao studentSubjectDao, LocationDao locationDao, SubjectDao subjectDao, StudentSubjectExamDao studentSubjectExamDao) {
+    public ExamService(ExamDao examDao, MapperFacade mapperFacade,
+                       AccountService accountService, StudentSubjectDao studentSubjectDao,
+                       LocationDao locationDao, SubjectDao subjectDao, StudentSubjectExamDao studentSubjectExamDao,
+                       SemesterDao semesterDao) {
         this.examDao = examDao;
         this.mapperFacade = mapperFacade;
         this.accountService = accountService;
@@ -40,6 +46,7 @@ public class ExamService {
         this.locationDao = locationDao;
         this.subjectDao = subjectDao;
         this.studentSubjectExamDao = studentSubjectExamDao;
+        this.semesterDao = semesterDao;
     }
 
     public ListExamResponse getAll(Long semesterId, PageBase pageBase) {
@@ -114,5 +121,13 @@ public class ExamService {
         examResponse.setNumberOfCredit(subject.getNumberOfCredit());
         examResponse.setSubjectSemesterId(exam.getSubjectSemesterId());
         return examResponse;
+    }
+
+    public List<ExamResponse> getExamBySubjectId(Long subjectId) {
+        DktStudent dktStudent = accountService.getUserSession();
+        Long semesterId = semesterDao.getCurrentSemesterId();
+        List<Exam> exams = examDao.getExamBySemesterIdAndSubjectId(semesterId, subjectId);
+        if (CollectionUtils.isEmpty(exams)) return null;
+        return groupExam(exams);
     }
 }

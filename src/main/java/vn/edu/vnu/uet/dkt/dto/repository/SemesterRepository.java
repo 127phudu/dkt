@@ -12,4 +12,5 @@ public interface SemesterRepository extends JpaRepository<Semester, Long> {
     List<Semester> findByStartDateAfter(LocalDateTime startDate);
     List<Semester> findByStatus(Integer status);
     List<Semester> findByIdIn(List<Long> ids);
+    Semester findByStatusIn(List<Integer> listStatus);
 }

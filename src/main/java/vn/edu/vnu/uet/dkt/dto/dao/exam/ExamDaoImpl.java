@@ -48,6 +48,13 @@ public class ExamDaoImpl implements ExamDao {
     }
 
     @Override
+    public List<Exam> getExamBySemesterIdAndSubjectId(Long semesterId, Long subjectId) {
+        List<Exam> exams = examRepository.findAllBySemesterIdAndSubjectId(semesterId, subjectId);
+        if(CollectionUtils.isEmpty(exams)) return null;
+        return exams;
+    }
+
+    @Override
     public List<Exam> getByExamIdIn(List<Long> examIds) {
         List<Exam> exams = examRepository.findAllByIdIn(examIds);
         if(CollectionUtils.isEmpty(exams)) return new ArrayList<>();
