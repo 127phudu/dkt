@@ -8,10 +8,7 @@ import vn.edu.vnu.uet.dkt.dto.service.studentSubjectExam.StudentSubjectExamServi
 import vn.edu.vnu.uet.dkt.rest.model.ApiDataResponse;
 import vn.edu.vnu.uet.dkt.rest.model.PageBase;
 import vn.edu.vnu.uet.dkt.rest.model.exam.ListExamResponse;
-import vn.edu.vnu.uet.dkt.rest.model.studentSubjectExam.ListStudentSubjectExamResponse;
-import vn.edu.vnu.uet.dkt.rest.model.studentSubjectExam.RegisterRequest;
-import vn.edu.vnu.uet.dkt.rest.model.studentSubjectExam.RegisterModel;
-import vn.edu.vnu.uet.dkt.rest.model.studentSubjectExam.StudentSubjectExamResponse;
+import vn.edu.vnu.uet.dkt.rest.model.studentSubjectExam.*;
 
 @RestController
 @RequestMapping("/student/student_subject_exam")
@@ -36,10 +33,10 @@ public class StudentSubjectExamController {
     }
 
     @PostMapping("/register/semester/{id}")
-    public ApiDataResponse<String> register(@RequestBody RegisterRequest registerRequest, @PathVariable Long id) {
+    public ApiDataResponse<RegisterResponse> register(@RequestBody RegisterRequest registerRequest, @PathVariable Long id) {
         try {
-            studentSubjectExamService.register(registerRequest, id);
-            return ApiDataResponse.ok("success");
+            RegisterResponse registerResponse = studentSubjectExamService.register(registerRequest, id);
+            return ApiDataResponse.ok(registerResponse);
         } catch (BaseException e) {
             return ApiDataResponse.error(e.getCode(), e.getMessage());
         } catch (Exception e) {

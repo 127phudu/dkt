@@ -100,7 +100,8 @@ public class StudentSubjectExamService {
         return response;
     }
 
-    public void register(RegisterRequest registerRequest, Long semesterId) {
+    public RegisterResponse register(RegisterRequest registerRequest, Long semesterId) {
+        int success = 0, fail = 0;
         Semester semester = semesterDao.getById(semesterId);
         if (semester.getStatus() != Constant.REGISTERING) {
             throw new BaseException(400, "Chưa đến giờ đăng ký");
@@ -123,21 +124,35 @@ public class StudentSubjectExamService {
             try {
                 LocalDateTime startTime = LocalDateTime.parse(registerModel.getStartTime(), format);
                 StudentSubject studentSubject = studentSubjectDao.getById(registerModel.getStudentSubjectId());
-                if (!studentSubject.getStudentId().equals(dktStudent.getId())) continue;
+                if (!studentSubject.getStudentId().equals(dktStudent.getId())) {
+                    fail++;
+                    continue;
+                }
                 StudentSubjectExam registerExist = studentSubjectExamMap.get(registerModel.getStudentSubjectId());
-                if (registerExist != null) continue;
+                if (registerExist != null) {
+                    fail++;
+                    continue;
+                }
                 List<Exam> slots = examInLocation.get(registerModel.getLocationId())
                         .get(registerModel.getStudentSubjectId())
                         .get(startTime);
-                if (slots == null) continue;
+                if (slots == null) {
+                    fail++;
+                    continue;
+                }
                 Exam slot = findSlot(slots);
-                if (slot == null) continue;
+                if (slot == null) {
+                    fail++;
+                    continue;
+                }
                 storeAndValidate(slot, studentSubject);
+                success++;
             } catch (Exception e) {
+                fail++;
                 log.error("can't register subject {}", registerModel);
             }
-
         }
+        return new RegisterResponse(success, fail);
     }
 
     @Transactional
