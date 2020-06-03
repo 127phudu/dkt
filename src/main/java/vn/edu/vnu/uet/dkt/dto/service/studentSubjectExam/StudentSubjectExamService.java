@@ -27,6 +27,7 @@ import vn.edu.vnu.uet.dkt.rest.model.PageBase;
 import vn.edu.vnu.uet.dkt.rest.model.PageResponse;
 import vn.edu.vnu.uet.dkt.rest.model.studentSubjectExam.*;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -111,19 +112,23 @@ public class StudentSubjectExamService {
         cancel(listCancelModel, dktStudent);
 
         List<Exam> exams = examDao.getAllBySemesterId(semesterId);
-        Map<Long, Map<Long, List<Exam>>> examInLocation = exams.stream()
+        Map<Long, Map<Long, Map<LocalDateTime,List<Exam>>>> examInLocation = exams.stream()
                 .collect(Collectors.groupingBy(Exam::getLocationId,
-                        Collectors.groupingBy(Exam::getSubjectSemesterId)));
+                        Collectors.groupingBy(Exam::getSubjectSemesterId,
+                        Collectors.groupingBy(Exam::getStartTime))));
         List<StudentSubjectExam> studentSubjectExams = studentSubjectExamDao.getByStudentIdAndSemesterId(dktStudent.getId(), semesterId);
         Map<Long, StudentSubjectExam> studentSubjectExamMap = studentSubjectExams.stream()
                 .collect(Collectors.toMap(StudentSubjectExam::getStudentSubjectId, x -> x));
         for (RegisterModel registerModel : registerModels) {
             try {
+                LocalDateTime startTime = LocalDateTime.parse(registerModel.getStartTime(), format);
                 StudentSubject studentSubject = studentSubjectDao.getById(registerModel.getStudentSubjectId());
                 if (!studentSubject.getStudentId().equals(dktStudent.getId())) continue;
                 StudentSubjectExam registerExist = studentSubjectExamMap.get(registerModel.getStudentSubjectId());
                 if (registerExist != null) continue;
-                List<Exam> slots = examInLocation.get(registerModel.getLocationId()).get(registerModel.getStudentSubjectId());
+                List<Exam> slots = examInLocation.get(registerModel.getLocationId())
+                        .get(registerModel.getStudentSubjectId())
+                        .get(startTime);
                 if (slots == null) continue;
                 Exam slot = findSlot(slots);
                 if (slot == null) continue;

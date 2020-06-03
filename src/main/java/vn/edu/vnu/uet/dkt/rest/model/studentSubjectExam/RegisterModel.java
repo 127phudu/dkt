@@ -12,4 +12,7 @@ public class RegisterModel {
 
     @JsonProperty("StudentSubjectId")
     private Long studentSubjectId;
+
+    @JsonProperty("StartTime")
+    private String startTime;
 }
