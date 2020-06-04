@@ -6,4 +6,6 @@ public interface Constant {
     int UNREGISTERED = 1;
     int REGISTERING = 2;
     int REGISTERED = 3;
+    String FROM_EMAIL = "dkt.tuhv@gmail.com";
+    String FROM_EMAIL_PASSWORD = "dkt12345";
 }
