@@ -186,6 +186,7 @@ public class StudentSubjectExamService {
         studentSubjectExam.setSemesterId(exam.getSemesterId());
         studentSubjectExam.setStudentId(studentSubject.getStudentId());
         studentSubjectExam.setStudentSubjectId(studentSubject.getId());
+        studentSubjectExam.setSubjectSemesterId(studentSubject.getSubjectSemesterId());
 
         examDao.store(exam);
         studentSubjectDao.store(studentSubject);
