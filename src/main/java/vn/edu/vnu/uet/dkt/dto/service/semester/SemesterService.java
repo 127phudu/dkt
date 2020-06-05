@@ -45,14 +45,14 @@ public class SemesterService {
         Map<Long, Semester> semesterMap = semesters.stream().collect(Collectors.toMap(Semester::getId, x -> x));
         if (semesters.size() == 0) return null;
         DktStudent dktStudent = accountService.getUserSession();
-        List<Long> semesterIds = studentSubjectDao.getSemesterStudentIn(dktStudent.getId());
+        List<StudentSubject> studentSubjects = studentSubjectDao.getSemesterStudentIn(dktStudent.getId());
+        List<Long> semesterIds = studentSubjects.stream().map(StudentSubject::getSemesterId).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(semesterIds)) return null;
         for (Long semesterId : semesterIds) {
             Semester semester = semesterMap.get(semesterId);
             if (semester != null && semester.getStatus() == Constant.REGISTERING) {
                 return mapperFacade.map(semester, SemesterResponse.class);
             }
-
         }
         return null;
     }

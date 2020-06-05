@@ -19,5 +19,5 @@ public interface StudentSubjectDao {
 
     List<StudentSubject> getByStudentId(Long studentId);
 
-    List<Long> getSemesterStudentIn(Long studentId);
+    List<StudentSubject> getSemesterStudentIn(Long studentId);
 }
