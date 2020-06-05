@@ -1,0 +1,14 @@
+package vn.edu.vnu.uet.dkt.rest.model.auth;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class ChangePasswordRequest {
+    @JsonProperty(value = "Password")
+    private String password;
+    @JsonProperty(value = "PasswordConfirm")
+    private String passwordConfirm;
+}

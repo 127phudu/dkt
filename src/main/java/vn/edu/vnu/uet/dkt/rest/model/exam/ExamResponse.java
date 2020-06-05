@@ -10,9 +10,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class ExamResponse {
-    @JsonProperty(value = "StudentSubjectExamId")
-    private Long studentSubjectExamId;
-
     @JsonProperty(value = "SubjectName")
     private String subjectName;
 

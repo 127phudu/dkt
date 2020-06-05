@@ -1,6 +1,5 @@
 package vn.edu.vnu.uet.dkt.rest.controller.auth;
 
-import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +12,7 @@ import vn.edu.vnu.uet.dkt.rest.model.ApiDataResponse;
 import vn.edu.vnu.uet.dkt.rest.model.auth.LoginRequest;
 import vn.edu.vnu.uet.dkt.rest.model.auth.LoginResponse;
 
+import javax.mail.MessagingException;
 import java.util.Map;
 
 @RestController

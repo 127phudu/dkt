@@ -1,6 +1,5 @@
 package vn.edu.vnu.uet.dkt.dto.service.sendMail;
 
-import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 import vn.edu.vnu.uet.dkt.dto.dao.student.StudentDao;
 import vn.edu.vnu.uet.dkt.dto.model.Student;
 
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 @Service

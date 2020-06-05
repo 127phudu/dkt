@@ -51,14 +51,15 @@ public class ExamService {
         List<Long> subjectIds = studentSubjects.stream().map(StudentSubject::getSubjectId).collect(Collectors.toList());
         List<Exam> exams = examDao.getExamBySemesterIdAndSubjectIdIn(semesterId, subjectIds);
         if (CollectionUtils.isEmpty(exams)) return null;
-        List<ExamResponse> examResponses = groupExam(exams);
+        Map<Long, StudentSubject> studentSubjectMap = studentSubjects.stream().collect(Collectors.toMap(StudentSubject::getSubjectId, x->x));
+        List<ExamResponse> examResponses = groupExam(exams, studentSubjectMap);
 
         return generateListExamResponse(examResponses, pageBase);
     }
 
 
 
-    public List<ExamResponse> groupExam(List<Exam> exams) {
+    public List<ExamResponse> groupExam(List<Exam> exams, Map<Long, StudentSubject> studentSubjectMap) {
         List<Location> locations = locationDao.getAll();
         Map<Long, Location> locationMap = locations.stream().collect(Collectors.toMap(Location::getId, x -> x));
         List<Subject> subjects =  subjectDao.getAll();
@@ -74,7 +75,7 @@ public class ExamService {
                 examResponse.setNumberOfStudentSubscribe(subscribe);
                 examResponse.setNumberOfStudent(numStd);
             } else {
-                examResponse = getExamResponse(exam, locationMap, subjectMap);
+                examResponse = getExamResponse(exam, locationMap, subjectMap, studentSubjectMap);
                 examMap.put(key,examResponse);
             }
         }
@@ -101,7 +102,7 @@ public class ExamService {
         return exam != null;
     }
 
-    public ExamResponse getExamResponse(Exam exam, Map<Long, Location> locationMap, Map<Long, Subject> subjectMap) {
+    public ExamResponse getExamResponse(Exam exam, Map<Long, Location> locationMap, Map<Long, Subject> subjectMap, Map<Long, StudentSubject> studentSubjectMap) {
         ExamResponse examResponse = new ExamResponse();
         examResponse.setStartTime(exam.getStartTime().format(format));
         examResponse.setEndTime(exam.getEndTime().format(format));
@@ -115,6 +116,9 @@ public class ExamService {
         Subject subject = subjectMap.get(exam.getSubjectId());
         examResponse.setSubjectName(subject.getSubjectName());
         examResponse.setSubjectCode(subject.getSubjectCode());
+
+        StudentSubject studentSubject = studentSubjectMap.get(exam.getSubjectId());
+        examResponse.setStudentSubjectId(studentSubject.getSubjectSemesterId());
         return examResponse;
     }
 }
