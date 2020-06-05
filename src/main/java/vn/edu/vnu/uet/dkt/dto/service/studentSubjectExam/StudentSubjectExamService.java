@@ -238,6 +238,7 @@ public class StudentSubjectExamService {
         resultResponse.setSubjectName(subject.getSubjectName());
         resultResponse.setSubjectCode(subject.getSubjectCode());
         resultResponse.setStudentSubjectId(exam.getSubjectSemesterId());
+        resultResponse.setNumberOfCredit(subject.getNumberOfCredit());
         if (Constant.REGISTERED == status) {
             Room room = roomMap.get(exam.getRoomId());
             resultResponse.setRoomName(room.getRoomName());

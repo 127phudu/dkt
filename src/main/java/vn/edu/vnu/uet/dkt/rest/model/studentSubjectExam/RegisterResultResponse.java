@@ -33,4 +33,7 @@ public class RegisterResultResponse {
 
     @JsonProperty(value = "RoomName")
     private String roomName;
+
+    @JsonProperty(value = "NumberOfCredit")
+    private Integer numberOfCredit;
 }
