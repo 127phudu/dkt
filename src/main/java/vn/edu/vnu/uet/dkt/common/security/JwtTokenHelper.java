@@ -27,6 +27,7 @@ public class JwtTokenHelper {
     static final String USERNAME = "username";
     static final String EMAIL = "email";
     static final String COURSES = "courses";
+    static final String FULL_NAME = "fullName";
 
     private static ObjectMapper mapper = new ObjectMapper();
 
@@ -43,6 +44,7 @@ public class JwtTokenHelper {
                 .claim(USERNAME, student.getUsername())
                 .claim(EMAIL, student.getEmail())
                 .claim(ROLE, student.getRole())
+                .claim(FULL_NAME, student.getFullName())
                 .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
                 .compact();
         return TOKEN_PREFIX + token;

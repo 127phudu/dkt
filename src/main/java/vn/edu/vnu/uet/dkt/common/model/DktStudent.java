@@ -14,4 +14,5 @@ public class DktStudent {
     private String email;
     private String courses;
     private String role;
+    private String fullName;
 }
