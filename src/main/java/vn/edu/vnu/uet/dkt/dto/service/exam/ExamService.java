@@ -116,6 +116,7 @@ public class ExamService {
         Subject subject = subjectMap.get(exam.getSubjectId());
         examResponse.setSubjectName(subject.getSubjectName());
         examResponse.setSubjectCode(subject.getSubjectCode());
+        examResponse.setNumberOfCredit(subject.getNumberOfCredit());
 
         StudentSubject studentSubject = studentSubjectMap.get(exam.getSubjectId());
         examResponse.setStudentSubjectId(studentSubject.getSubjectSemesterId());

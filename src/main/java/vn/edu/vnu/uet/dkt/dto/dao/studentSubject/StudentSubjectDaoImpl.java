@@ -43,4 +43,14 @@ public class StudentSubjectDaoImpl implements StudentSubjectDao {
     public List<StudentSubject> getBySemesterIdAndStudentId(Long semesterId, Long studentId) {
         return studentSubjectRepository.findBySemesterIdAndStudentId(semesterId, studentId);
     }
+
+    @Override
+    public List<StudentSubject> getByStudentId(Long studentId) {
+        return studentSubjectRepository.findByStudentId(studentId);
+    }
+
+    @Override
+    public List<Long> getSemesterStudentIn(Long studentId) {
+        return studentSubjectRepository.findDistinctSemesterIdByStudentId(studentId);
+    }
 }

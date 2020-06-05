@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface SemesterDao  {
     Semester getById(Long id);
-    List<Semester> getByCreatedDate(LocalDateTime dateTime);
+    List<Semester> getByStartDate(LocalDateTime dateTime);
+    List<Semester> getSemesterRegistering();
 }

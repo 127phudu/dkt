@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface SemesterRepository extends JpaRepository<Semester, Long> {
     List<Semester> findByStartDateAfter(LocalDateTime startDate);
+    List<Semester> findByStatus(Integer status);
 }

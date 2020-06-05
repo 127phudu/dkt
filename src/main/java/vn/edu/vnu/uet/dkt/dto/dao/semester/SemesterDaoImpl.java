@@ -2,6 +2,7 @@ package vn.edu.vnu.uet.dkt.dto.dao.semester;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import vn.edu.vnu.uet.dkt.common.Constant;
 import vn.edu.vnu.uet.dkt.dto.model.Semester;
 import vn.edu.vnu.uet.dkt.dto.repository.SemesterRepository;
 
@@ -23,8 +24,17 @@ public class SemesterDaoImpl implements SemesterDao {
     }
 
     @Override
-    public List<Semester> getByCreatedDate(LocalDateTime dateTime) {
+    public List<Semester> getByStartDate(LocalDateTime dateTime) {
         List<Semester> semesters = semesterRepository.findByStartDateAfter(dateTime);
+        if (CollectionUtils.isEmpty(semesters)) {
+            return new ArrayList<>();
+        }
+        return semesters;
+    }
+
+    @Override
+    public List<Semester> getSemesterRegistering() {
+        List<Semester> semesters = semesterRepository.findByStatus(Constant.REGISTERING);
         if (CollectionUtils.isEmpty(semesters)) {
             return new ArrayList<>();
         }

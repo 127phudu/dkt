@@ -39,4 +39,7 @@ public class ExamResponse {
 
     @JsonProperty(value = "StudentSubjectId")
     private Long studentSubjectId;
+
+    @JsonProperty(value = "NumberOfCredit")
+    private Integer numberOfCredit;
 }
