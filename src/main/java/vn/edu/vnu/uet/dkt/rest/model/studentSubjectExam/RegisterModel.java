@@ -10,8 +10,8 @@ public class RegisterModel {
     @JsonProperty("LocationId")
     private Long locationId;
 
-    @JsonProperty("StudentSubjectId")
-    private Long studentSubjectId;
+    @JsonProperty("SubjectSemesterId")
+    private Long subjectSemesterId;
 
     @JsonProperty("StartTime")
     private String startTime;

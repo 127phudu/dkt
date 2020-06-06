@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import vn.edu.vnu.uet.dkt.common.Constant;
 import vn.edu.vnu.uet.dkt.common.exception.BadRequestException;
 import vn.edu.vnu.uet.dkt.common.exception.BaseException;
@@ -21,7 +20,6 @@ import vn.edu.vnu.uet.dkt.dto.dao.studentSubjectExam.StudentSubjectExamDao;
 import vn.edu.vnu.uet.dkt.dto.dao.subject.SubjectDao;
 import vn.edu.vnu.uet.dkt.dto.dao.subjectSemester.SubjectSemesterDao;
 import vn.edu.vnu.uet.dkt.dto.model.*;
-import vn.edu.vnu.uet.dkt.dto.service.exam.ExamService;
 import vn.edu.vnu.uet.dkt.dto.service.studentSubject.StudentSubjectService;
 import vn.edu.vnu.uet.dkt.rest.model.PageBase;
 import vn.edu.vnu.uet.dkt.rest.model.PageResponse;
@@ -42,35 +40,36 @@ public class StudentSubjectExamService {
     private final AccountService accountService;
     private final StudentSubjectService studentSubjectService;
     private final SubjectSemesterDao subjectSemesterDao;
-    private final ExamService examService;
     private final SubjectDao subjectDao;
     private final LocationDao locationDao;
     private final MapperFacade mapperFacade;
     private final ExamDao examDao;
     private final RoomDao roomDao;
     private final SemesterDao semesterDao;
+    private final StoreRegisterService storeRegisterService;
     private final DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private final DateTimeFormatter formatDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    public StudentSubjectExamService(StudentSubjectExamDao studentSubjectExamDao, StudentSubjectDao studentSubjectDao, AccountService accountService, StudentSubjectService studentSubjectService, SubjectSemesterDao subjectSemesterDao, ExamService examService, SubjectDao subjectDao, LocationDao locationDao, MapperFacade mapperFacade, ExamDao examDao, RoomDao roomDao, SemesterDao semesterDao) {
+    public StudentSubjectExamService(StudentSubjectExamDao studentSubjectExamDao, StudentSubjectDao studentSubjectDao, AccountService accountService, StudentSubjectService studentSubjectService, SubjectSemesterDao subjectSemesterDao, SubjectDao subjectDao, LocationDao locationDao, MapperFacade mapperFacade, ExamDao examDao, RoomDao roomDao, SemesterDao semesterDao, StoreRegisterService storeRegisterService) {
         this.studentSubjectExamDao = studentSubjectExamDao;
         this.studentSubjectDao = studentSubjectDao;
         this.accountService = accountService;
         this.studentSubjectService = studentSubjectService;
         this.subjectSemesterDao = subjectSemesterDao;
-        this.examService = examService;
         this.subjectDao = subjectDao;
         this.locationDao = locationDao;
         this.mapperFacade = mapperFacade;
         this.examDao = examDao;
         this.roomDao = roomDao;
         this.semesterDao = semesterDao;
+        this.storeRegisterService = storeRegisterService;
     }
 
     @Transactional
     public StudentSubjectExamResponse create(RegisterModel request) {
         validateStudentSubjectExam(request);
-        StudentSubject studentSubject = studentSubjectDao.getById(request.getStudentSubjectId());
+        DktStudent dktStudent = accountService.getUserSession();
+        StudentSubject studentSubject = studentSubjectDao.getByStudentAndSubjectSemesterId(dktStudent.getId(), request.getSubjectSemesterId());
         SubjectSemester subjectSemester = subjectSemesterDao.getBySubjectIdAndSemesterId(
                 studentSubject.getSubjectId(),
                 studentSubject.getSemesterId()
@@ -110,31 +109,31 @@ public class StudentSubjectExamService {
         List<RegisterModel> registerModels = registerRequest.getRegisters();
         List<RegisterModel> listCancelModel = registerRequest.getCancels();
 
-        cancel(listCancelModel, dktStudent);
+        storeRegisterService.cancel(listCancelModel, dktStudent);
 
         List<Exam> exams = examDao.getAllBySemesterId(semesterId);
-        Map<Long, Map<Long, Map<LocalDateTime,List<Exam>>>> examInLocation = exams.stream()
+        Map<Long, Map<Long, Map<LocalDateTime, List<Exam>>>> examInLocation = exams.stream()
                 .collect(Collectors.groupingBy(Exam::getLocationId,
                         Collectors.groupingBy(Exam::getSubjectSemesterId,
-                        Collectors.groupingBy(Exam::getStartTime))));
+                                Collectors.groupingBy(Exam::getStartTime))));
         List<StudentSubjectExam> studentSubjectExams = studentSubjectExamDao.getByStudentIdAndSemesterId(dktStudent.getId(), semesterId);
         Map<Long, StudentSubjectExam> studentSubjectExamMap = studentSubjectExams.stream()
                 .collect(Collectors.toMap(StudentSubjectExam::getStudentSubjectId, x -> x));
         for (RegisterModel registerModel : registerModels) {
             try {
                 LocalDateTime startTime = LocalDateTime.parse(registerModel.getStartTime(), format);
-                StudentSubject studentSubject = studentSubjectDao.getById(registerModel.getStudentSubjectId());
+                StudentSubject studentSubject = studentSubjectDao.getById(registerModel.getSubjectSemesterId());
                 if (!studentSubject.getStudentId().equals(dktStudent.getId())) {
                     fail++;
                     continue;
                 }
-                StudentSubjectExam registerExist = studentSubjectExamMap.get(registerModel.getStudentSubjectId());
+                StudentSubjectExam registerExist = studentSubjectExamMap.get(registerModel.getSubjectSemesterId());
                 if (registerExist != null) {
                     fail++;
                     continue;
                 }
                 List<Exam> slots = examInLocation.get(registerModel.getLocationId())
-                        .get(registerModel.getStudentSubjectId())
+                        .get(registerModel.getSubjectSemesterId())
                         .get(startTime);
                 if (slots == null) {
                     fail++;
@@ -145,7 +144,7 @@ public class StudentSubjectExamService {
                     fail++;
                     continue;
                 }
-                storeAndValidate(slot, studentSubject);
+                storeRegisterService.storeAndValidate(slot, studentSubject);
                 success++;
             } catch (Exception e) {
                 fail++;
@@ -153,44 +152,6 @@ public class StudentSubjectExamService {
             }
         }
         return new RegisterResponse(success, fail);
-    }
-
-    @Transactional
-    public void cancel(List<RegisterModel> cancelModel, DktStudent dktStudent) {
-        List<Long> getStudentSubjectIds = cancelModel.stream().map(RegisterModel::getStudentSubjectId).collect(Collectors.toList());
-        if (CollectionUtils.isEmpty(getStudentSubjectIds)) return;
-        List<Long> cancelList = new ArrayList<>();
-        for (Long studentSubjectId : getStudentSubjectIds) {
-            StudentSubject studentSubject = studentSubjectDao.getById(studentSubjectId);
-            if (studentSubject == null || !dktStudent.getId().equals(studentSubject.getStudentId())) continue;
-            cancelList.add(studentSubjectId);
-        }
-        if (CollectionUtils.isEmpty(cancelList)) return;
-        List<StudentSubjectExam> studentSubjectExams = studentSubjectExamDao.getByStudentSubjectIdIn(cancelList);
-        studentSubjectExamDao.deleteAll(studentSubjectExams);
-    }
-
-    @Transactional
-    public void storeAndValidate(Exam slot, StudentSubject studentSubject) {
-        Exam exam = examDao.getById(slot.getId());
-        int numberStudent = exam.getNumberOfStudent();
-        int numberStudentSubscribe = exam.getNumberOfStudentSubscribe() == null ? 0 : exam.getNumberOfStudentSubscribe();
-        if (numberStudentSubscribe >= numberStudent) return;
-        numberStudentSubscribe++;
-        exam.setNumberOfStudentSubscribe(numberStudentSubscribe);
-
-        studentSubject.setIsRegistered(true);
-
-        StudentSubjectExam studentSubjectExam = new StudentSubjectExam();
-        studentSubjectExam.setExamId(exam.getId());
-        studentSubjectExam.setSemesterId(exam.getSemesterId());
-        studentSubjectExam.setStudentId(studentSubject.getStudentId());
-        studentSubjectExam.setStudentSubjectId(studentSubject.getId());
-        studentSubjectExam.setSubjectSemesterId(studentSubject.getSubjectSemesterId());
-
-        examDao.store(exam);
-        studentSubjectDao.store(studentSubject);
-        studentSubjectExamDao.store(studentSubjectExam);
     }
 
     public ListStudentSubjectExamResponse getAllByStudentId(PageBase pageBase) {
@@ -248,13 +209,13 @@ public class StudentSubjectExamService {
 
     public void validateStudentSubjectExam(RegisterModel request) {
 
-        if (request.getStudentSubjectId() == null) {
+        if (request.getSubjectSemesterId() == null) {
             throw new BadRequestException(400, "StudentSubject không thể null");
         }
-        if (!studentSubjectService.existStudentSubject(request.getStudentSubjectId())) {
+        if (!studentSubjectService.existStudentSubject(request.getSubjectSemesterId())) {
             throw new BadRequestException(400, "StudentSubject không tồn tại");
         }
-        StudentSubject studentSubject = studentSubjectDao.getById(request.getStudentSubjectId());
+        StudentSubject studentSubject = studentSubjectDao.getById(request.getSubjectSemesterId());
         Semester semester = semesterDao.getById(studentSubject.getSemesterId());
 
         if (semester.getStatus() == null || semester.getStatus().equals(Constant.inActive)) {

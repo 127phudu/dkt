@@ -37,8 +37,8 @@ public class ExamResponse {
     @JsonProperty(value = "LocationId")
     private Long locationId;
 
-    @JsonProperty(value = "StudentSubjectId")
-    private Long studentSubjectId;
+    @JsonProperty(value = "SubjectSemesterId")
+    private Long subjectSemesterId;
 
     @JsonProperty(value = "NumberOfCredit")
     private Integer numberOfCredit;

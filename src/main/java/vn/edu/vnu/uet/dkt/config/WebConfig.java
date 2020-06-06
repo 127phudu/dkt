@@ -39,7 +39,8 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.js")
                 .permitAll()
                 .antMatchers(
-                        "/api/auth/*")
+                        "/api/auth/*",
+                        "/render")
                 .permitAll()
                 .anyRequest().authenticated()
                 .and().csrf().disable();
