@@ -9,6 +9,7 @@ import vn.edu.vnu.uet.dkt.dto.service.auth.AuthenticationService;
 import vn.edu.vnu.uet.dkt.dto.service.sendMail.ResetPassword;
 import vn.edu.vnu.uet.dkt.rest.controller.BaseController;
 import vn.edu.vnu.uet.dkt.rest.model.ApiDataResponse;
+import vn.edu.vnu.uet.dkt.rest.model.auth.ChangePasswordRequest;
 import vn.edu.vnu.uet.dkt.rest.model.auth.LoginRequest;
 import vn.edu.vnu.uet.dkt.rest.model.auth.LoginResponse;
 
@@ -40,8 +41,26 @@ public class AuthController extends BaseController {
 
     @PostMapping("/forgot_password")
     public ApiDataResponse<String> forgotPassword(@RequestBody Map<String,String> request) throws MessagingException, MessagingException, javax.mail.MessagingException {
-        String email = request.get("Email");
-        resetPassword.resetPassword(email);
-        return ApiDataResponse.ok("success");
+        try {
+            String email = request.get("Email");
+            resetPassword.resetPassword(email);
+            return ApiDataResponse.ok("success");
+        } catch (BaseException e) {
+            return ApiDataResponse.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            return ApiDataResponse.error();
+        }
+    }
+
+    @PostMapping("/change_password")
+    public ApiDataResponse<String> changePassword(@RequestBody ChangePasswordRequest request) {
+        try {
+            authenticationService.changePassword(request);
+            return ApiDataResponse.ok("success");
+        } catch (BaseException e) {
+            return ApiDataResponse.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            return ApiDataResponse.error();
+        }
     }
 }

@@ -8,6 +8,7 @@ public interface StudentDao {
     Student getByEmail(String email);
 
     Student getByUsername(String username);
+    Student getById(Long id);
 
     Student save(Student student);
 

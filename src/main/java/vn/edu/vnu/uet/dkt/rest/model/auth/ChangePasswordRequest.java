@@ -9,6 +9,8 @@ import lombok.Setter;
 public class ChangePasswordRequest {
     @JsonProperty(value = "Password")
     private String password;
+    @JsonProperty(value = "PasswordNew")
+    private String passwordNew;
     @JsonProperty(value = "PasswordConfirm")
     private String passwordConfirm;
 }
