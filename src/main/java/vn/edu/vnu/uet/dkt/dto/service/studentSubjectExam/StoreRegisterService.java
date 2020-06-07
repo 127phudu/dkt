@@ -64,7 +64,7 @@ public class StoreRegisterService {
         studentSubjectExam.setStudentId(studentSubject.getStudentId());
         studentSubjectExam.setStudentSubjectId(studentSubject.getId());
         studentSubjectExam.setSubjectSemesterId(studentSubject.getSubjectSemesterId());
-
+        log.info("number subscribe : {}, studentSubjectId: {}", numberStudentSubscribe, studentSubject.getId() );
         examDao.store(exam);
         studentSubjectDao.store(studentSubject);
         studentSubjectExamDao.store(studentSubjectExam);

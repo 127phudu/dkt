@@ -122,12 +122,8 @@ public class StudentSubjectExamService {
         for (RegisterModel registerModel : registerModels) {
             try {
                 LocalDateTime startTime = LocalDateTime.parse(registerModel.getStartTime(), format);
-                StudentSubject studentSubject = studentSubjectDao.getById(registerModel.getSubjectSemesterId());
-                if (!studentSubject.getStudentId().equals(dktStudent.getId())) {
-                    fail++;
-                    continue;
-                }
-                StudentSubjectExam registerExist = studentSubjectExamMap.get(registerModel.getSubjectSemesterId());
+                StudentSubject studentSubject = studentSubjectDao.getByStudentAndSubjectSemesterId(dktStudent.getId(),registerModel.getSubjectSemesterId());
+                StudentSubjectExam registerExist = studentSubjectExamMap.get(studentSubject.getId());
                 if (registerExist != null) {
                     fail++;
                     continue;

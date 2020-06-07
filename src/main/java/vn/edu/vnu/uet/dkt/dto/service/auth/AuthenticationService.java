@@ -39,7 +39,9 @@ public class AuthenticationService {
         }
 
         Student student = this.getStudentUsernameOrEmail(username);
-
+        if (student == null) {
+            throw new UnAuthorizeException(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
+        }
         boolean result = passwordEncoder.matches(request.getPassword(), student.getPassword());
         if (!result) {
             throw new UnAuthorizeException(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
