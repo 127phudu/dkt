@@ -49,10 +49,6 @@ public class ExamService {
         List<Exam> exams = examDao.getExamBySemesterIdAndSubjectIdIn(semesterId, subjectIds);
         if (CollectionUtils.isEmpty(exams)) return null;
         List<ExamResponse> examResponses = groupExam(exams);
-        examResponses = examResponses.stream()
-                .sorted(Comparator.comparingLong(ExamResponse::getSubjectSemesterId))
-                .collect(Collectors.toList());
-
         return generateListExamResponse(examResponses, pageBase);
     }
 
@@ -76,7 +72,9 @@ public class ExamService {
                 examMap.put(key,examResponse);
             }
         }
-        return new ArrayList<>(examMap.values());
+        List<ExamResponse> responses = new ArrayList<>(examMap.values());
+        responses = responses.stream().sorted(Comparator.comparingLong(ExamResponse::getSubjectSemesterId)).collect(Collectors.toList());
+        return responses;
     }
 
     public ExamResponse getExam(Long id) {
