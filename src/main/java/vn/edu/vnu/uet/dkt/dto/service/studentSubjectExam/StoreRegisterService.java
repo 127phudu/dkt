@@ -34,13 +34,12 @@ public class StoreRegisterService {
 
     @Transactional
     public void cancel(List<RegisterModel> cancelModel, DktStudent dktStudent) {
-        List<Long> getStudentSubjectIds = cancelModel.stream().map(RegisterModel::getSubjectSemesterId).collect(Collectors.toList());
-        if (CollectionUtils.isEmpty(getStudentSubjectIds)) return;
+        List<Long> getSubjectSemesterIds = cancelModel.stream().map(RegisterModel::getSubjectSemesterId).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(getSubjectSemesterIds)) return;
         List<Long> cancelList = new ArrayList<>();
-        for (Long studentSubjectId : getStudentSubjectIds) {
-            StudentSubject studentSubject = studentSubjectDao.getById(studentSubjectId);
-            if (studentSubject == null || !dktStudent.getId().equals(studentSubject.getStudentId())) continue;
-            cancelList.add(studentSubjectId);
+        for (Long subjectSemesterId : getSubjectSemesterIds) {
+            StudentSubject studentSubject = studentSubjectDao.getByStudentAndSubjectSemesterId(dktStudent.getId(),subjectSemesterId);
+            cancelList.add(studentSubject.getId());
         }
         if (CollectionUtils.isEmpty(cancelList)) return;
         List<StudentSubjectExam> studentSubjectExams = studentSubjectExamDao.getByStudentSubjectIdIn(cancelList);
