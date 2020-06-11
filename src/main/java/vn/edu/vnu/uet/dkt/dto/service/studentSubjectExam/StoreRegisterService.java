@@ -43,6 +43,15 @@ public class StoreRegisterService {
         }
         if (CollectionUtils.isEmpty(cancelList)) return;
         List<StudentSubjectExam> studentSubjectExams = studentSubjectExamDao.getByStudentSubjectIdIn(cancelList);
+        List<Long> examIds = studentSubjectExams.stream().map(StudentSubjectExam::getExamId).collect(Collectors.toList());
+        List<Exam> exams = examDao.getByExamIdIn(examIds);
+        for (Exam exam : exams) {
+            int numberStudentSubscribe = exam.getNumberOfStudentSubscribe() == null ? 0 : exam.getNumberOfStudentSubscribe();
+            if (numberStudentSubscribe == 0) continue;
+            numberStudentSubscribe--;
+            exam.setNumberOfStudentSubscribe(numberStudentSubscribe);
+            examDao.store(exam);
+        }
         studentSubjectExamDao.deleteAll(studentSubjectExams);
     }
 
