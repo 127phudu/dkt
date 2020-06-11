@@ -28,8 +28,8 @@ public class RegisterResultResponse {
     @JsonProperty(value = "LocationId")
     private Long locationId;
 
-    @JsonProperty(value = "StudentSubjectId")
-    private Long studentSubjectId;
+    @JsonProperty(value = "SubjectSemesterId")
+    private Long subjectSemesterId;
 
     @JsonProperty(value = "RoomName")
     private String roomName;

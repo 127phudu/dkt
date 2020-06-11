@@ -17,10 +17,7 @@ import vn.edu.vnu.uet.dkt.rest.model.exam.ExamResponse;
 import vn.edu.vnu.uet.dkt.rest.model.exam.ListExamResponse;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,6 +49,9 @@ public class ExamService {
         List<Exam> exams = examDao.getExamBySemesterIdAndSubjectIdIn(semesterId, subjectIds);
         if (CollectionUtils.isEmpty(exams)) return null;
         List<ExamResponse> examResponses = groupExam(exams);
+        examResponses = examResponses.stream()
+                .sorted(Comparator.comparingLong(ExamResponse::getSubjectSemesterId))
+                .collect(Collectors.toList());
 
         return generateListExamResponse(examResponses, pageBase);
     }
