@@ -72,7 +72,7 @@ public class AuthenticationService {
         if (!result) {
             throw new UnAuthorizeException(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
         }
-        if (passwordNew.equals(passwordConfirm)) {
+        if (!passwordNew.equals(passwordConfirm)) {
             throw new BaseException(400, "Password new and PasswordConfirm not match!");
         }
         String passwordEncode = passwordEncoder.encode(passwordNew);
