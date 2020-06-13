@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenHelper {
-    static final long EXPIRATION_TIME = 600_000; // 10'
+    static final long EXPIRATION_TIME = 3600_000; // 10'
     static String SECRET_KEY;
     static final String TOKEN_PREFIX = "Bearer ";
     static final String HEADER_STRING = "Authorization";

@@ -50,7 +50,7 @@ public class StudentSubjectDaoImpl implements StudentSubjectDao {
     }
 
     @Override
-    public List<StudentSubject> getSemesterStudentIn(Long studentId) {
+    public List<StudentSubject> getStudentSubjectByStudentId(Long studentId) {
         return studentSubjectRepository.findDistinctSemesterIdByStudentId(studentId);
     }
 }

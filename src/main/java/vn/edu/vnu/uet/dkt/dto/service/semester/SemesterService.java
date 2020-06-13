@@ -14,6 +14,7 @@ import vn.edu.vnu.uet.dkt.rest.model.semester.ListSemesterResponse;
 import vn.edu.vnu.uet.dkt.rest.model.semester.SemesterResponse;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -41,16 +42,20 @@ public class SemesterService {
     }
 
     public SemesterResponse getActive() {
-        List<Semester> semesters = semesterDao.getSemesterRegistering();
-        Map<Long, Semester> semesterMap = semesters.stream().collect(Collectors.toMap(Semester::getId, x -> x));
-        if (semesters.size() == 0) return null;
         DktStudent dktStudent = accountService.getUserSession();
-        List<StudentSubject> studentSubjects = studentSubjectDao.getSemesterStudentIn(dktStudent.getId());
-        List<Long> semesterIds = studentSubjects.stream().map(StudentSubject::getSemesterId).collect(Collectors.toList());
-        if (CollectionUtils.isEmpty(semesterIds)) return null;
-        for (Long semesterId : semesterIds) {
-            Semester semester = semesterMap.get(semesterId);
-            if (semester != null && semester.getStatus() == Constant.REGISTERING) {
+        List<StudentSubject> studentSubjects = studentSubjectDao.getStudentSubjectByStudentId(dktStudent.getId());
+        List<Long> semesterIds = studentSubjects.stream()
+                .map(StudentSubject::getSemesterId)
+                .distinct().collect(Collectors.toList());
+        List<Semester> semesters = semesterDao.getSemesterIn(semesterIds);
+        semesters.sort(Comparator.comparing(Semester::getEndDate).reversed());
+        for (Semester semester : semesters) {
+            if (semester.getStatus() == Constant.REGISTERING) {
+                return mapperFacade.map(semester, SemesterResponse.class);
+            }
+        }
+        for (Semester semester : semesters) {
+            if (semester.getStatus() == Constant.REGISTERED) {
                 return mapperFacade.map(semester, SemesterResponse.class);
             }
         }

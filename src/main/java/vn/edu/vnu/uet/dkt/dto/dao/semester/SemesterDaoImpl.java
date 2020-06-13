@@ -40,4 +40,22 @@ public class SemesterDaoImpl implements SemesterDao {
         }
         return semesters;
     }
+
+    @Override
+    public List<Semester> getSemesterRegistered() {
+        List<Semester> semesters = semesterRepository.findByStatus(Constant.REGISTERED);
+        if (CollectionUtils.isEmpty(semesters)) {
+            return new ArrayList<>();
+        }
+        return semesters;
+    }
+
+    @Override
+    public List<Semester> getSemesterIn(List<Long> ids) {
+        List<Semester> semesters = semesterRepository.findByIdIn(ids);
+        if (CollectionUtils.isEmpty(semesters)) {
+            return new ArrayList<>();
+        }
+        return semesters;
+    }
 }

@@ -9,4 +9,6 @@ public interface SemesterDao  {
     Semester getById(Long id);
     List<Semester> getByStartDate(LocalDateTime dateTime);
     List<Semester> getSemesterRegistering();
+    List<Semester> getSemesterRegistered();
+    List<Semester> getSemesterIn(List<Long> ids);
 }
