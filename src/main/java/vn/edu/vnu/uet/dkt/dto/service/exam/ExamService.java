@@ -123,10 +123,8 @@ public class ExamService {
         return examResponse;
     }
 
-    public List<ExamResponse> getExamBySubjectId(Long subjectId) {
-        DktStudent dktStudent = accountService.getUserSession();
-        Long semesterId = semesterDao.getCurrentSemesterId();
-        List<Exam> exams = examDao.getExamBySemesterIdAndSubjectId(semesterId, subjectId);
+    public List<ExamResponse> getExamBySubjectSemesterId(Long subjectSemesterId) {
+        List<Exam> exams = examDao.getExamBySubjectSemesterId(subjectSemesterId);
         if (CollectionUtils.isEmpty(exams)) return null;
         return groupExam(exams);
     }

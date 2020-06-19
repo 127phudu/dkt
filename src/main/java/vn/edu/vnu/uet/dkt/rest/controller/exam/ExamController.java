@@ -45,10 +45,10 @@ public class ExamController {
         }
     }
 
-    @GetMapping("/subject/{subjectId}")
-    public ApiDataResponse getExamBySubjectId(@PathVariable Long subjectId) {
+    @GetMapping("/subjectSemester/{subjectSemesterId}")
+    public ApiDataResponse getExamBySubjectId(@PathVariable Long subjectSemesterId) {
         try {
-            return ApiDataResponse.ok(examService.getExamBySubjectId(subjectId));
+            return ApiDataResponse.ok(examService.getExamBySubjectSemesterId(subjectSemesterId));
         } catch (BaseException e) {
             return ApiDataResponse.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
