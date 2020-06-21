@@ -2,11 +2,14 @@ package vn.edu.vnu.uet.dkt.rest.controller.semester;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.edu.vnu.uet.dkt.common.exception.BaseException;
 import vn.edu.vnu.uet.dkt.common.security.AccountService;
+import vn.edu.vnu.uet.dkt.common.utilities.PageUtil;
 import vn.edu.vnu.uet.dkt.dto.service.semester.SemesterService;
 import vn.edu.vnu.uet.dkt.rest.model.ApiDataResponse;
+import vn.edu.vnu.uet.dkt.rest.model.PageBase;
 import vn.edu.vnu.uet.dkt.rest.model.semester.ListSemesterResponse;
 import vn.edu.vnu.uet.dkt.rest.model.semester.SemesterResponse;
 
@@ -20,9 +23,13 @@ public class SemesterController {
     }
 
     @GetMapping("/all")
-    public ApiDataResponse<ListSemesterResponse> getAll() {
+    public ApiDataResponse<ListSemesterResponse> getAll(
+            @RequestParam(required = false, value = "Size") Integer size,
+            @RequestParam(required = false, value = "Page") Integer page
+    ) {
         try {
-            return ApiDataResponse.ok(semesterService.getAll());
+            PageBase pageBase = PageUtil.validate(page, size);
+            return ApiDataResponse.ok(semesterService.getAll(pageBase));
         } catch (BaseException e) {
             return ApiDataResponse.error(e.getCode(), e.getMessage());
         } catch (Exception e) {

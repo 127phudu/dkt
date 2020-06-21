@@ -1,6 +1,7 @@
 package vn.edu.vnu.uet.dkt.dto.service.semester;
 
 import ma.glasnost.orika.MapperFacade;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import vn.edu.vnu.uet.dkt.common.Constant;
@@ -10,10 +11,13 @@ import vn.edu.vnu.uet.dkt.dto.dao.semester.SemesterDao;
 import vn.edu.vnu.uet.dkt.dto.dao.studentSubject.StudentSubjectDao;
 import vn.edu.vnu.uet.dkt.dto.model.Semester;
 import vn.edu.vnu.uet.dkt.dto.model.StudentSubject;
+import vn.edu.vnu.uet.dkt.rest.model.PageBase;
+import vn.edu.vnu.uet.dkt.rest.model.PageResponse;
 import vn.edu.vnu.uet.dkt.rest.model.semester.ListSemesterResponse;
 import vn.edu.vnu.uet.dkt.rest.model.semester.SemesterResponse;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -34,11 +38,17 @@ public class SemesterService {
 
     }
 
-    public ListSemesterResponse getAll() {
-        LocalDateTime localDateTime = LocalDateTime.now().minusDays(10);
-        List<Semester> semesters = semesterDao.getByStartDate(localDateTime);
+    public ListSemesterResponse getAll(PageBase pageBase) {
+        DktStudent dktStudent = accountService.getUserSession();
+        List<StudentSubject> studentSubjects = studentSubjectDao.getStudentSubjectByStudentId(dktStudent.getId());
+        List<Long> semesterIds = studentSubjects.stream()
+                .map(StudentSubject::getSemesterId)
+                .distinct().collect(Collectors.toList());
+        List<Semester> semesters = semesterDao.getSemesterIn(semesterIds);
+        semesters.sort(Comparator.comparing(Semester::getEndDate).reversed());
+
         List<SemesterResponse> semesterResponses = mapperFacade.mapAsList(semesters, SemesterResponse.class);
-        return new ListSemesterResponse(semesterResponses);
+        return  generateSemesterPaging(semesterResponses,pageBase);
     }
 
     public SemesterResponse getActive() {
@@ -60,5 +70,18 @@ public class SemesterService {
             }
         }
         return null;
+    }
+
+    private ListSemesterResponse generateSemesterPaging(List<SemesterResponse> semesterResponses, PageBase pageBase) {
+        List<SemesterResponse> semesterResponseList = new ArrayList<>();
+        Integer page = pageBase.getPage();
+        Integer size = pageBase.getSize();
+        int total = semesterResponses.size();
+        int maxSize = Math.min(total, size * page);
+        for (int i = size * (page - 1); i < maxSize; i++) {
+            semesterResponseList.add(semesterResponses.get(i));
+        }
+        PageResponse pageResponse = new PageResponse(page, size, total);
+        return new ListSemesterResponse(semesterResponseList, pageResponse);
     }
 }
