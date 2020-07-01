@@ -3,6 +3,8 @@ package vn.edu.vnu.uet.dkt.dto.service.studentSubjectExam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import vn.edu.vnu.uet.dkt.common.model.DktStudent;
@@ -14,9 +16,15 @@ import vn.edu.vnu.uet.dkt.dto.model.StudentSubject;
 import vn.edu.vnu.uet.dkt.dto.model.StudentSubjectExam;
 import vn.edu.vnu.uet.dkt.rest.model.studentSubjectExam.RegisterModel;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
+
+import static org.springframework.transaction.annotation.Isolation.REPEATABLE_READ;
+import static org.springframework.transaction.annotation.Isolation.SERIALIZABLE;
 
 @Service
 public class StoreRegisterService {
@@ -25,6 +33,7 @@ public class StoreRegisterService {
     private final StudentSubjectExamDao studentSubjectExamDao;
     private final StudentSubjectDao studentSubjectDao;
     private final ExamDao examDao;
+    private final Lock lock = new ReentrantLock();
 
     public StoreRegisterService(StudentSubjectExamDao studentSubjectExamDao, StudentSubjectDao studentSubjectDao, ExamDao examDao) {
         this.studentSubjectExamDao = studentSubjectExamDao;

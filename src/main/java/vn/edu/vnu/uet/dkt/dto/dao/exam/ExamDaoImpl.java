@@ -1,10 +1,12 @@
 package vn.edu.vnu.uet.dkt.dto.dao.exam;
 
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import vn.edu.vnu.uet.dkt.dto.model.Exam;
 import vn.edu.vnu.uet.dkt.dto.repository.ExamRepository;
 
+import javax.persistence.LockModeType;
 import java.util.ArrayList;
 import java.util.List;
 

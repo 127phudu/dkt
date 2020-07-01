@@ -1,11 +1,13 @@
 package vn.edu.vnu.uet.dkt.dto.dao.semester;
 
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import vn.edu.vnu.uet.dkt.common.Constant;
 import vn.edu.vnu.uet.dkt.dto.model.Semester;
 import vn.edu.vnu.uet.dkt.dto.repository.SemesterRepository;
 
+import javax.persistence.LockModeType;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,7 @@ public class SemesterDaoImpl implements SemesterDao {
     }
 
     @Override
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     public Semester getById(Long id) {
         return semesterRepository.findById(id).orElse(null);
     }

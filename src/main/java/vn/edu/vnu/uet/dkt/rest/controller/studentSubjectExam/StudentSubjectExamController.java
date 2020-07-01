@@ -5,6 +5,7 @@ import vn.edu.vnu.uet.dkt.common.exception.BaseException;
 import vn.edu.vnu.uet.dkt.common.utilities.PageUtil;
 import vn.edu.vnu.uet.dkt.dto.service.studentSubject.StudentSubjectService;
 import vn.edu.vnu.uet.dkt.dto.service.studentSubjectExam.StudentSubjectExamService;
+import vn.edu.vnu.uet.dkt.rest.controller.BaseController;
 import vn.edu.vnu.uet.dkt.rest.model.ApiDataResponse;
 import vn.edu.vnu.uet.dkt.rest.model.PageBase;
 import vn.edu.vnu.uet.dkt.rest.model.exam.ListExamResponse;
@@ -12,7 +13,7 @@ import vn.edu.vnu.uet.dkt.rest.model.studentSubjectExam.*;
 
 @RestController
 @RequestMapping("/student/student_subject_exam")
-public class StudentSubjectExamController {
+public class StudentSubjectExamController extends BaseController {
     private final StudentSubjectService studentSubjectService;
     private final StudentSubjectExamService studentSubjectExamService;
 

@@ -99,6 +99,7 @@ public class StudentSubjectExamService {
         return response;
     }
 
+    @Transactional
     public RegisterResponse register(RegisterRequest registerRequest, Long semesterId) {
         int success = 0, fail = 0;
         Semester semester = semesterDao.getById(semesterId);
